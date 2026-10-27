@@ -38,7 +38,7 @@ step "exp1" "完成 Wave P0 任务 P0.3 的第一部分：写 paper/code/generat
 
 step "exp2" "完成 Wave P0 任务 P0.3 的第二部分：在 experiments.py 里补 E3 实验——随机 arborescence，n=100/1000/10000，测 tree_linear 的运行时间，验证是否近似线性（记录每个 n 的实测耗时）。结果写 paper/results/e3.json，并在 PROGRESS.md 里贴出三个 n 对应的真实秒数。若 n=10000 超过 5 分钟，降到 5000 并明写降级原因。"
 
-step "tex" "完成 Wave P0 任务 P0.4：创建 paper/main.tex（article 类，宏包 amsmath amsthm algorithmic booktabs hyperref），写完整的导言区、标题作者（Xin Xia, Chongqing Technology and Business University）、Abstract，以及第 3 节 Problem Definition（定义 2.1-2.4 + 引理 2.5 及其证明）。其余章节先写 \\section 标题和一句占位（后续 Wave 补）。然后尝试编译：按 SPEC-paper.md 第 10 节的降级链依次试 pdflatex / tectonic，都没有就交付 tex 并写 paper/HOWTO-COMPILE.md。把实际编译方式和结果写进 PROGRESS.md。"
+step "tex" "完成 Wave P0 任务 P0.4：创建 paper/main.tex（article 类，宏包 amsmath amsthm booktabs hyperref algorithm algpseudocode），写完整的导言区、标题作者（Xin Xia, Chongqing Technology and Business University）、Abstract，以及第 3 节 Problem Definition（定义 2.1-2.4 + 引理 2.5 及其证明）。其余章节先写 section 标题和一句占位（后续 Wave 补）。然后编译：cd paper && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex（本机 TinyTeX 已就绪）。编译后检查 main.log 里 Reference 与 Citation 未定义警告数量必须为 0。把 PDF 页数、日志警告数、实际编译命令写进 PROGRESS.md。"
 
 step "checker" "完成 Wave P0 任务 P0.5：写 paper/check_paper.py，功能是正则扫描 paper/main.tex 里所有形如数字（整数、小数、百分比）的 token，逐个到 paper/results/*.json 里核对是否存在；输出未匹配的数字列表，有未匹配则非零退出。自测：临时在 tex 里植入一个明显假的数字（如 0.98765），运行脚本确认能检出，然后删掉植入内容，把自测过程写进 PROGRESS.md。最后跑一次全量 check_paper.py 记录真实输出。"
 

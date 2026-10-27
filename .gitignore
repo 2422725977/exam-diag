@@ -6,3 +6,10 @@ __pycache__/
 build/
 dist/
 run.log
+main.aux
+main.log
+main.fls
+main.fdb_latexmk
+main.out
+main.bbl
+main.blg

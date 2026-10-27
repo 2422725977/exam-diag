@@ -87,7 +87,7 @@ E5 是这篇论文和真实场景挂钩的地方，必须包含，并说明四�
 
 ## 7. 论文结构（`paper/main.tex`，英文，arXiv 格式）
 
-用 `article` 类 + `amsmath, amsthm, algorithmic, booktabs, hyperref`。不依赖未安装的包。
+用 `article` 类 + `\usepackage{amsmath, amsthm, booktabs, hyperref, algorithm, algpseudocode}`。算法伪码用 `algorithm` + `algpseudocode` 环境（`algorithmic` 语法已过时）。本机 TinyTeX 已装齐这些包，不要引入其他未装包。
 
 | 节 | 内容 | 篇幅 |
 |---|---|---|
@@ -147,11 +147,14 @@ E5 是这篇论文和真实场景挂钩的地方，必须包含，并说明四�
 - 工作目录 `/Users/xi/Documents/exam-diag/paper/`，随主仓库 push（SSH remote 已配好）。
 - 每完成一个任务 `git commit` + `git push`。
 - 依赖只允许：numpy、networkx、matplotlib、pytest。
-- **LaTeX 编译降级链**（本机当前没有任何 TeX 引擎，按顺序尝试）：
-  1. `which pdflatex` → 有则 `pdflatex -interaction=nonstopmode main.tex` 跑两遍（第二遍解析引用）
-  2. `which tectonic` → 有则 `tectonic main.tex`（自动拉包，不需要完整 TeX Live）
-  3. 都没有 → **只交付 `main.tex` + `refs.bib`**，并在 `paper/HOWTO-COMPILE.md` 写清 Overleaf 步骤：新建 Blank Project → 上传 main.tex 与 refs.bib → 设置 Compiler 为 pdfLaTeX → Recompile。**不许为了产出 PDF 而放弃 LaTeX 格式改写成 Markdown。**
-  - 无论走哪条路，`paper/PROGRESS.md` 都要记录实际用的编译方式和结果，不要静默失败。
+- **LaTeX 环境已就绪**（2026-10 实测）：TinyTeX（TeX Live 2026）装在 `~/Library/TinyTeX`，`pdflatex` / `latexmk` 已软链到 `/opt/homebrew/bin`，`amsmath amsthm booktabs hyperref algorithm algpseudocode` 全部可解析，最小编译测试通过。
+- **编译命令统一用**：
+  ```bash
+  cd paper && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+  ```
+  `latexmk` 会自动跑够次数解析 `\ref` 与 `\cite`，不要手写两遍 `pdflatex`。
+- 编译后必须检查：PDF 存在、`main.log` 里 `Warning: Reference` 与 `Warning: Citation` 数量为 0。有未定义引用就修，不许留着交付。
+- 缺包时用 `tlmgr install <包名>` 补（用户级安装，无需 sudo），并把装了什么记进 PROGRESS.md。
 - **不声称投稿**、不发邮件、不联系作者。产出是 preprint 草稿。
 - 论文标题页不写导师（没有），作者写 `Xin Xia`，单位写 `Chongqing Technology and Business University`。
 
