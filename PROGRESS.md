@@ -92,3 +92,24 @@ $ python -m examdiag.eval
 $ python -m pytest tests/test_eval.py -q
 8 passed
 ```
+
+## 0.3 四科知识点 240 个（2026-10-28）
+
+产出：`data/concepts/{408,math1,english,politics}.yaml` 各恰好 60 节点 + `scripts/validate_data.py` 验收脚本。
+
+| 科目 | 节点 | 根节点 | 依赖边 | 最长链 | 结构说明 |
+|---|---|---|---|---|---|
+| 408 | 60 | 10 | 60 | 8 层 | 数据结构 30 + 组成 10 + 操作系统 10 + 网络 10，严格前置链（栈→递归→树遍历→BST→AVL） |
+| math1 | 60 | 4 | 77 | 12 层 | 高数 30 + 线代 15 + 概率 15；跨块弱耦合仅 2 条人工确认边（连续型分布←定积分、偏导←向量） |
+| english | 60 | 39 | 29 | 5 层 | 能力层级图：词汇 25 → 句法 20 → 篇章 15，根节点 39 ≤ 40 达标 |
+| politics | 60 | 6 | 56 | 12 层 | 马原 20（前置边建全）+ 毛中特 14 + 史纲 12（按时间线性，深度即来自此链）+ 思修 14 |
+
+```
+$ python scripts/validate_data.py concepts data/concepts/408.yaml --subject 408
+[PASS] schema 加载（含 prereq 引用与无环） / 节点数 == 60 / subject 一致 / 无孤立节点
+       stats: nodes=60 roots=10 sinks=27 depth=8 edges=60
+# math1/english/politics 同样全 PASS；跨文件 concept id 唯一 PASS
+RESULT: all checks PASSED
+```
+
+验收：四科各恰好 60 节点 ✓；408/math1/politics 无环且无孤立节点 ✓；english 根节点 39 ≤ 40 ✓；跨文件 id 唯一 ✓。说明：english 为能力层级图（非全连接 DAG），按要求允许大量 prereqs 为空；politics 最长链 12 来自史纲线性时间轴（SPEC 明确要求"史纲按时间线性"）。
