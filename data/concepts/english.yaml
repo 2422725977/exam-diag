@@ -1,0 +1,66 @@
+# english（考研英语）知识点图谱 —— Wave 0 精标
+# 能力层级图（非严格 DAG 题型树）：词汇层 → 句法层 → 篇章层
+# 60 节点，只保留 29 条真实依赖边（SPEC 5.2.5：英语是能力层级图，大量节点 prereqs 为空）
+# 根节点 39（<= 40 达标）；id 跨文件唯一（前缀 eng.vocab/syntax/disc）。
+subject: "english"
+concepts:
+  - {id: eng.vocab.core,         name: 核心词汇词义辨析,       subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.affix,        name: 词根词缀,               subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.polysemy,     name: 一词多义与熟词僻义,     subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.collocation,  name: 固定搭配,               subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.phrasal,      name: 短语动词,               subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.prep,         name: 介词搭配,               subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.synonym,      name: 近义词辨析,             subject: "english", difficulty: 3, prereqs: [eng.vocab.core]}
+  - {id: eng.vocab.antonym,      name: 反义词与语义对比,       subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.derive,       name: 派生词形变化,           subject: "english", difficulty: 3, prereqs: [eng.vocab.affix]}
+  - {id: eng.vocab.confuse,      name: 易混词辨析,             subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.context,      name: 语境猜词,               subject: "english", difficulty: 3, prereqs: [eng.vocab.polysemy, eng.vocab.affix]}
+  - {id: eng.vocab.connotation,  name: 感情色彩与褒贬,         subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.idiom,        name: 习语与固定表达,         subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.formal,       name: 书面语体与正式度,       subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.acad.econ,    name: 学术词族-经济,          subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.acad.social,  name: 学术词族-社会,          subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.acad.tech,    name: 学术词族-科技,          subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.acad.edu,     name: 学术词族-教育,          subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.acad.law,     name: 学术词族-法律,          subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.acad.media,   name: 学术词族-传媒,          subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.vocab.link,         name: 衔接词与连接语,         subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.pron,         name: 代词词族,               subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.num,          name: 数词与倍数表达,         subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.time,         name: 时间与频率副词,         subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.vocab.degree,       name: 程度副词与限定语,       subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.syntax.svo,         name: 五大基本句型,           subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.syntax.tense,       name: 时态体系,               subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.syntax.modal,       name: 情态动词,               subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.syntax.negative,    name: 否定与半否定结构,       subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.syntax.there.be,    name: there be 存在句,        subject: "english", difficulty: 2, prereqs: []}
+  - {id: eng.syntax.voice,       name: 被动语态,               subject: "english", difficulty: 3, prereqs: [eng.syntax.tense]}
+  - {id: eng.syntax.subjunctive, name: 虚拟语气,               subject: "english", difficulty: 5, prereqs: [eng.syntax.tense, eng.syntax.modal]}
+  - {id: eng.syntax.nonfinite,   name: 非谓语动词,             subject: "english", difficulty: 4, prereqs: [eng.syntax.tense, eng.syntax.svo]}
+  - {id: eng.syntax.attributive, name: 定语从句,               subject: "english", difficulty: 4, prereqs: [eng.syntax.svo]}
+  - {id: eng.syntax.noun.clause, name: 名词性从句,             subject: "english", difficulty: 4, prereqs: [eng.syntax.svo]}
+  - {id: eng.syntax.adverbial,   name: 状语从句,               subject: "english", difficulty: 3, prereqs: [eng.syntax.svo]}
+  - {id: eng.syntax.comparison,  name: 比较结构,               subject: "english", difficulty: 3, prereqs: [eng.syntax.svo]}
+  - {id: eng.syntax.agreement,   name: 主谓一致,               subject: "english", difficulty: 3, prereqs: [eng.syntax.svo]}
+  - {id: eng.syntax.inversion,   name: 倒装结构,               subject: "english", difficulty: 4, prereqs: []}
+  - {id: eng.syntax.emphasis,    name: 强调结构,               subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.syntax.parallel,    name: 平行结构,               subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.syntax.insertion,   name: 插入语与同位语,         subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.syntax.pronoun.ref, name: 代词指代一致性,         subject: "english", difficulty: 3, prereqs: [eng.vocab.pron]}
+  - {id: eng.syntax.absolutep,   name: 独立主格结构,           subject: "english", difficulty: 4, prereqs: []}
+  - {id: eng.syntax.long.sentence, name: 长难句拆解,           subject: "english", difficulty: 5, prereqs: [eng.syntax.attributive, eng.syntax.noun.clause, eng.syntax.adverbial, eng.syntax.nonfinite]}
+  - {id: eng.disc.main.idea,     name: 主旨大意题,             subject: "english", difficulty: 4, prereqs: [eng.syntax.long.sentence]}
+  - {id: eng.disc.detail,        name: 细节题(定位与同义改写), subject: "english", difficulty: 3, prereqs: [eng.syntax.long.sentence]}
+  - {id: eng.disc.inference,     name: 推理判断题,             subject: "english", difficulty: 4, prereqs: [eng.disc.main.idea]}
+  - {id: eng.disc.attitude,      name: 态度题,                 subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.disc.meaning,       name: 词义句义题,             subject: "english", difficulty: 3, prereqs: [eng.vocab.context]}
+  - {id: eng.disc.cohesion,      name: 语篇衔接与指代,         subject: "english", difficulty: 4, prereqs: [eng.syntax.pronoun.ref, eng.vocab.link]}
+  - {id: eng.disc.structure,     name: 篇章结构分析,           subject: "english", difficulty: 4, prereqs: [eng.disc.main.idea]}
+  - {id: eng.disc.argument,      name: 论证方法,               subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.disc.example,       name: 例证题,                 subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.disc.cloze,         name: 完形填空,               subject: "english", difficulty: 4, prereqs: [eng.vocab.collocation, eng.disc.cohesion]}
+  - {id: eng.disc.order,         name: 排序题(新题型),         subject: "english", difficulty: 4, prereqs: []}
+  - {id: eng.disc.matching,      name: 信息匹配题(新题型),     subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.disc.translate,     name: 英译汉,                 subject: "english", difficulty: 4, prereqs: [eng.syntax.long.sentence]}
+  - {id: eng.disc.writing.small, name: 小作文(应用文格式),     subject: "english", difficulty: 3, prereqs: []}
+  - {id: eng.disc.writing.big,   name: 大作文(图画作文),       subject: "english", difficulty: 4, prereqs: []}
