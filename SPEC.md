@@ -201,11 +201,76 @@ P(L_{n+1})       = P(L_n|obs) + (1 - P(L_n|obs))·p_T
 2.4 `examples/demo.ipynb` 可一键运行，输出诊断结果表格。
 2.5 打 tag `v0.3.0` 并推送（v0.1.0/v0.2.0 已被占用），不发布 PyPI。
 
-### Wave 3 —— 第四晚（目标：论文素材 + 软著）
+### Wave 3 —— 真实数据验证（最重要的一波，决定项目能不能叫"研究"）
 
-3.1 `docs/METHOD.md` 补全第 5 节推导 + 图示。
-3.2 论文草稿 `paper/draft.md`：标题候选、Abstract、Related Work（引 pyBKT / DKT / GKT 三篇即可）、方法、实验、局限。目标定位 arXiv preprint + 教学类 workshop，**不投顶会**。
-3.3 软著材料：从源码抽 60 页（前 30 页 + 后 30 页，每页 ~50 行）+ 软件说明书 30 页（功能、运行环境、操作流程）。放 `docs/copyright/`。
+**为什么必须做**：当前 `benchmark.md` 的 AUC 0.7872 是**合成序列**上跑出来的，审稿人和懂行的人一眼会问"你自己造的数据自己跑，有什么意义"。Wave 3 把这个洞补上。
+
+| # | 任务 | 产出 | 验收 |
+|---|---|---|---|
+| 3.1 | `scripts/download_assistments.py`：下载 ASSISTments 2012-2013 skill-builder 数据集（公开，`sites.google.com/site/assistmentsdata`）。下载失败时**不准卡死**，明写失败原因并尝试镜像 | 原始文件或失败报告 | 文件存在且行数 > 10 万，或 PROGRESS 有明确失败记录 |
+| 3.2 | `scripts/convert_assistments.py`：转成 `Attempt` 格式（user_id/skill/question/correct/ts），按 skill 建概念表，生成 `data/real/assistments.jsonl` + `data/real/concepts_assistments.yaml` | 转换脚本 + 数据 | 转换后 attempt 数 ≥ 10 万；概念数 = 原数据集 skill 数；无解析失败行 |
+| 3.3 | `scripts/compare_bkt.py`：在真实数据上跑自写 BKT 与 `pyBKT`（`pip install pybkt`），5 折交叉验证，比 AUC/RMSE | 对比结果 | 自写 BKT 与 pyBKT 的 AUC 差 < 0.02；否则明写差值和可能原因 |
+| 3.4 | 更新 `benchmark.md`：把真实数据结果放在最前面，合成数据结果降级为"可控环境下的补充" | benchmark.md | 表格含 dataset 列，标明 synthetic / assistments |
+
+**3.3 的验收是这一波的成败判据**：如果自写 BKT 和 pyBKT 差超过 0.02，说明引擎有问题，必须在 PROGRESS 里明写并列出排查结论，**不许调参掩盖**。
+
+### Wave 4 —— 软著材料（唯一能换证书的一波）
+
+| # | 任务 | 产出 | 验收 |
+|---|---|---|---|
+| 4.1 | `scripts/extract_source.py`：从 `examdiag/` 抽取源码，按"前 30 页 + 后 30 页、每页 50 行、页眉含软件名与版本号"排版成 PDF | `docs/copyright/source-60p.pdf` | 页数 = 60，每页 50 行（末页可少），页眉齐全 |
+| 4.2 | 写 `docs/copyright/manual.md` → PDF：软件说明书 30 页。必含章节：功能概述、运行环境、安装步骤、数据格式说明（Concept/Question/Attempt 三张表的字段）、五大功能模块操作流程（BKT 拟合 / 诊断 / 补习路径 / 可视化 / 数据校验）、界面截图、版本说明 | `docs/copyright/manual-30p.pdf` | 页数 ≥ 30，每个模块都有操作步骤 + 对应截图 |
+| 4.3 | `docs/copyright/INFO.md`：申请信息清单（软件全称与简称、版本号、开发完成日期、首次发表日期、开发方式、权利取得方式、硬件环境、软件环境、编程语言、源程序量行数） | md | 十项信息齐全，行数用 `cloc` 或 `wc -l` 实数 |
+
+**软著的关键约束**：源码必须是**你自己仓库里的真实代码**（这是自写 BKT 而不是直接调 pyBKT 的原因之一）；说明书的截图必须来自真实运行。
+
+### Wave 5 —— 论文素材（技术报告，不投顶会）
+
+| # | 任务 | 产出 | 验收 |
+|---|---|---|---|
+| 5.1 | `docs/METHOD.md`：把 SPEC 第 5 节扩写成完整方法文档——BKT 推导、EM 收敛性讨论、根因诊断公式的来源与直觉、与 Reiter 诊断理论的关系 | md | 每条公式有推导步骤，不是直接给结论 |
+| 5.2 | `docs/PAPER-DRAFT.md`：技术报告式草稿。定位 **arXiv preprint / 教学类 workshop**，不投顶会。结构：Abstract / Introduction / Related Work（pyBKT、DKT、pyKT、知识空间理论）/ Method / Experiments（合成 + ASSISTments）/ Limitations | md | 所有实验数字可追溯到 benchmark.md；参考文献 ≥ 15 条且真实 |
+| 5.3 | `docs/CITATIONS.bib`：真实 BibTeX，只能由脚本从 arXiv/S2 API 生成 | bib | `grep -c '@'` ≥ 15，每条有真实 arxiv_id |
+
+**5.2 必须如实写的三条局限**：① 题库是自建 600 题，非真实考试分布；② BKT 假设概念独立，与实际前置耦合冲突（这正是本文用图修正的点，可作卖点）；③ 只验证了 4 科同学科内部，未做跨学科。
+
+### Wave 6 —— 工程化与发布物料（决定能不能被搜到）
+
+| # | 任务 | 产出 | 验收 |
+|---|---|---|---|
+| 6.1 | `.github/workflows/ci.yml`：push 时跑 ruff + pytest（Python 3.10/3.11/3.12 矩阵） | CI 配置 | GitHub Actions 页面显示绿色通过 |
+| 6.2 | `pytest --cov=examdiag` 覆盖率 ≥ 85%，写进 README 徽章 | 覆盖率报告 | 实际覆盖率数字 ≥ 85% |
+| 6.3 | GitHub Pages demo 站点：把 `viz/report.html` 部署成在线可点的页面，README 的 Website 字段填上 | Pages URL | URL 可访问，页面能加载 |
+| 6.4 | `.github/ISSUE_TEMPLATE/` + `CONTRIBUTING.md` + `CODE_OF_CONDUCT.md` | 模板文件 | 三个文件齐，issue 模板有 bug/feature 两类 |
+| 6.5 | 发布物料 `docs/LAUNCH.md`：中文版（小红书/知乎/B站）与英文版（HN/Reddit）两套文案，各 3 个标题候选 + 正文 + 配图说明 | md | 两套文案齐，每条都注明确切的发布时机 |
+
+**6.5 明确标注「人工执行」**：Agent 只写文案，不代替人去发。发帖需要真人身份和时机判断，机器发帖会被识别并封号。
+
+### 全波次时间表
+
+| Wave | 主题 | 预估 | 完成后 tag |
+|---|---|---|---|
+| 0 ✅ | 引擎 + 四科数据 | 6h | v0.1.0 |
+| 1 ✅ | 诊断引擎 + CLI | 5h | v0.2.0 |
+| 2 | 可视化 + GIF + 双语 README | 4h | v0.3.0 |
+| 3 | 真实数据验证（ASSISTments） | 5h | v0.4.0 |
+| 4 | 软著材料 | 4h | v0.5.0 |
+| 5 | 论文素材（技术报告） | 5h | v0.6.0 |
+| 6 | CI + Pages + 发布物料 | 4h | v1.0.0 |
+
+**总计约 33 小时**，按每晚 5–6 小时算，6 个晚上可以到 v1.0.0。
+
+### 波次依赖关系（不能乱序）
+
+```
+Wave 2（可视化）→ 独立可做
+Wave 3（真实数据）→ 必须在 Wave 5 之前，否则论文没有真实验证
+Wave 4（软著）→ 必须在 Wave 3 之后，源码含真实数据模块才完整
+Wave 5（论文）→ 依赖 Wave 3 的真实数字
+Wave 6（工程化）→ 最后做，CI 要跑通全部测试
+```
+
+**Wave 3 是硬闸门**：如果真实数据上自写 BKT 与 pyBKT 差距 > 0.05，停下来先修引擎，不要继续 Wave 4/5——软著和论文都建立在引擎正确的基础上。
 
 ## 7. 全局约束（给 Agent 的硬规则）
 
