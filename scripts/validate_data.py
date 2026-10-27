@@ -135,9 +135,11 @@ def validate_all() -> None:
         qpath = ROOT / f"data/questions/{subject}.jsonl"
         cpath = ROOT / f"data/concepts/{subject}.yaml"
         if qpath.exists() and cpath.exists():
-            validate_questions(qpath, subject, cpath,
-                               expect=150 if subject in ("408", "math1") else
-                               {s: len(load_concepts(cpath).concepts) and 150 for s in SUBJECTS}[subject])
+            # SPEC：超时时 408/math1 必须满 150，english/politics 可降级到 60
+            if subject in ("408", "math1"):
+                validate_questions(qpath, subject, cpath, expect=150)
+            else:
+                validate_questions(qpath, subject, cpath, expect=150, expect_min=60)
 
 
 def main() -> int:

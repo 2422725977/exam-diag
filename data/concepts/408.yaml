@@ -1,0 +1,65 @@
+# 408（计算机学科专业基础综合）知识点图谱 —— Wave 0 精标
+# 60 节点：数据结构 30 + 组成原理 10 + 操作系统 10 + 计算机网络 10
+# prereqs 只指向图中已声明的节点（保证无环）；id 跨文件唯一（前缀 ds/org/os/net）。
+subject: "408"
+concepts:
+  - {id: ds.array.array,      name: 数组与地址计算,           subject: "408", difficulty: 2, prereqs: []}
+  - {id: ds.linked.slist,     name: 单链表,                   subject: "408", difficulty: 2, prereqs: []}
+  - {id: ds.linked.dlist,     name: 双链表,                   subject: "408", difficulty: 3, prereqs: [ds.linked.slist]}
+  - {id: ds.linked.circular,  name: 循环链表,                 subject: "408", difficulty: 3, prereqs: [ds.linked.slist]}
+  - {id: ds.stack.stack,      name: 栈,                       subject: "408", difficulty: 2, prereqs: [ds.array.array]}
+  - {id: ds.queue.queue,      name: 队列,                     subject: "408", difficulty: 2, prereqs: [ds.array.array]}
+  - {id: ds.queue.circular,   name: 循环队列,                 subject: "408", difficulty: 3, prereqs: [ds.queue.queue]}
+  - {id: ds.queue.deque,      name: 双端队列,                 subject: "408", difficulty: 3, prereqs: [ds.queue.queue, ds.linked.dlist]}
+  - {id: ds.recursion,        name: 递归与系统栈,             subject: "408", difficulty: 3, prereqs: [ds.stack.stack]}
+  - {id: ds.string.kmp,       name: 串与KMP模式匹配,          subject: "408", difficulty: 4, prereqs: [ds.array.array, ds.recursion]}
+  - {id: ds.array.compress,   name: 稀疏矩阵与压缩存储,       subject: "408", difficulty: 3, prereqs: [ds.array.array]}
+  - {id: ds.tree.binary,      name: 二叉树定义与性质,         subject: "408", difficulty: 3, prereqs: [ds.recursion]}
+  - {id: ds.tree.traverse,    name: 二叉树遍历,               subject: "408", difficulty: 3, prereqs: [ds.tree.binary, ds.stack.stack, ds.recursion]}
+  - {id: ds.tree.threaded,    name: 线索二叉树,               subject: "408", difficulty: 4, prereqs: [ds.tree.traverse]}
+  - {id: ds.forest.convert,   name: 树/森林与二叉树转换,      subject: "408", difficulty: 3, prereqs: [ds.tree.binary]}
+  - {id: ds.forest.traverse,  name: 树与森林的遍历,           subject: "408", difficulty: 3, prereqs: [ds.forest.convert, ds.tree.traverse]}
+  - {id: ds.huffman,          name: 哈夫曼树与编码,           subject: "408", difficulty: 3, prereqs: [ds.tree.binary]}
+  - {id: ds.bst.bst,          name: 二叉搜索树,               subject: "408", difficulty: 4, prereqs: [ds.tree.traverse]}
+  - {id: ds.bst.rotate,       name: AVL平衡旋转,              subject: "408", difficulty: 5, prereqs: [ds.bst.bst]}
+  - {id: ds.bst.delete,       name: AVL删除与综合调整,        subject: "408", difficulty: 5, prereqs: [ds.bst.rotate]}
+  - {id: ds.heap.heap,        name: 堆与优先队列,             subject: "408", difficulty: 4, prereqs: [ds.tree.binary]}
+  - {id: ds.search.binary,    name: 折半查找,                 subject: "408", difficulty: 2, prereqs: [ds.array.array]}
+  - {id: ds.search.btree,     name: B树与B+树,                subject: "408", difficulty: 5, prereqs: [ds.bst.bst, ds.search.binary]}
+  - {id: ds.hash.hash,        name: 哈希表,                   subject: "408", difficulty: 3, prereqs: [ds.array.array]}
+  - {id: ds.hash.collision,   name: 冲突处理与装填因子,       subject: "408", difficulty: 4, prereqs: [ds.hash.hash]}
+  - {id: ds.graph.storage,    name: 图的存储(邻接矩阵/邻接表), subject: "408", difficulty: 3, prereqs: [ds.linked.slist, ds.array.array]}
+  - {id: ds.graph.traverse,   name: 图的遍历(BFS/DFS),        subject: "408", difficulty: 4, prereqs: [ds.graph.storage, ds.queue.queue, ds.recursion]}
+  - {id: ds.graph.mst,        name: 最小生成树(Prim/Kruskal), subject: "408", difficulty: 4, prereqs: [ds.graph.traverse]}
+  - {id: ds.graph.shortest,   name: 最短路径(Dijkstra/Floyd), subject: "408", difficulty: 5, prereqs: [ds.graph.traverse]}
+  - {id: ds.graph.topo,       name: 拓扑排序与关键路径,       subject: "408", difficulty: 4, prereqs: [ds.graph.traverse, ds.queue.queue]}
+  - {id: org.num.system,      name: 进制与码制,               subject: "408", difficulty: 2, prereqs: []}
+  - {id: org.fixed.point,     name: 定点数表示与运算,         subject: "408", difficulty: 3, prereqs: [org.num.system]}
+  - {id: org.float.ieee,      name: 浮点数与IEEE 754,         subject: "408", difficulty: 4, prereqs: [org.fixed.point]}
+  - {id: org.alu.adder,       name: 加法器与ALU,              subject: "408", difficulty: 4, prereqs: [org.fixed.point]}
+  - {id: org.mem.hierarchy,   name: 存储层次结构,             subject: "408", difficulty: 2, prereqs: []}
+  - {id: org.mem.cache,       name: Cache映射与替换算法,      subject: "408", difficulty: 5, prereqs: [org.mem.hierarchy]}
+  - {id: org.instr.format,    name: 指令格式与寻址方式,       subject: "408", difficulty: 3, prereqs: []}
+  - {id: org.instr.pipeline,  name: 指令流水线与冲突,         subject: "408", difficulty: 5, prereqs: [org.instr.format]}
+  - {id: org.bus,             name: 总线与总线仲裁,           subject: "408", difficulty: 3, prereqs: []}
+  - {id: org.io.interrupt,    name: 中断与DMA,                subject: "408", difficulty: 4, prereqs: [org.bus]}
+  - {id: os.process.process,  name: 进程与线程,               subject: "408", difficulty: 3, prereqs: []}
+  - {id: os.process.sched,    name: 处理机调度算法,           subject: "408", difficulty: 3, prereqs: [os.process.process]}
+  - {id: os.process.sync,     name: 进程同步与互斥,           subject: "408", difficulty: 5, prereqs: [os.process.process]}
+  - {id: os.process.deadlock, name: 死锁与银行家算法,         subject: "408", difficulty: 4, prereqs: [os.process.sync]}
+  - {id: os.mem.allocation,   name: 内存分配与回收,           subject: "408", difficulty: 3, prereqs: []}
+  - {id: os.mem.paging,       name: 分页与分段,               subject: "408", difficulty: 4, prereqs: [os.mem.allocation]}
+  - {id: os.mem.virtual,      name: 虚拟内存与页面置换,       subject: "408", difficulty: 4, prereqs: [os.mem.paging]}
+  - {id: os.fs.file,          name: 文件与目录逻辑结构,       subject: "408", difficulty: 3, prereqs: []}
+  - {id: os.fs.allocation,    name: 文件物理结构与空闲管理,   subject: "408", difficulty: 4, prereqs: [os.fs.file]}
+  - {id: os.io.io,            name: IO管理与缓冲技术,         subject: "408", difficulty: 4, prereqs: [org.io.interrupt]}
+  - {id: net.model.layered,   name: 分层模型与协议,           subject: "408", difficulty: 2, prereqs: []}
+  - {id: net.phys,            name: 物理层与传输媒体,         subject: "408", difficulty: 2, prereqs: [net.model.layered]}
+  - {id: net.datalink.framing, name: 成帧与差错检测,          subject: "408", difficulty: 3, prereqs: [net.phys]}
+  - {id: net.datalink.mac,    name: 介质访问控制(CSMA),       subject: "408", difficulty: 4, prereqs: [net.datalink.framing]}
+  - {id: net.ip.address,      name: IPv4编址与子网划分,       subject: "408", difficulty: 4, prereqs: [net.model.layered]}
+  - {id: net.ip.forwarding,   name: IP转发与路由算法,         subject: "408", difficulty: 4, prereqs: [net.ip.address]}
+  - {id: net.transport.udp,   name: UDP与端口,                subject: "408", difficulty: 3, prereqs: [net.ip.forwarding]}
+  - {id: net.transport.tcp,   name: TCP连接与可靠传输,        subject: "408", difficulty: 5, prereqs: [net.transport.udp]}
+  - {id: net.tcp.congestion,  name: 拥塞控制,                 subject: "408", difficulty: 5, prereqs: [net.transport.tcp]}
+  - {id: net.app.protocol,    name: 应用层协议(DNS/HTTP),     subject: "408", difficulty: 3, prereqs: [net.transport.tcp]}
