@@ -52,7 +52,7 @@ def test_predict_next_between_emission_bounds():
 def _reference_fb(seq, p: BKTParams):
     """无缩放的标量前向-后向参照实现，用于交叉验证批量实现。"""
     T = len(seq)
-    b = [(1 - p.p_S, p.p_S) if x else (p.p_G, 1 - p.p_G) for x in seq]  # (P(o|L), P(o|U))
+    b = [(1 - p.p_S, p.p_G) if x else (p.p_S, 1 - p.p_G) for x in seq]  # (P(o|L), P(o|U))
     alpha = np.empty((T, 2))
     alpha[0] = [p.p_L0 * b[0][0], (1 - p.p_L0) * b[0][1]]
     for t in range(1, T):
@@ -62,7 +62,9 @@ def _reference_fb(seq, p: BKTParams):
     beta = np.ones((T, 2))
     for t in range(T - 2, -1, -1):
         beta[t, 0] = b[t + 1][0] * beta[t + 1, 0]
-        beta[t, 1] = p.p_T * b[t + 1][0] * beta[t + 1, 0] + (1 - p.p_T) * b[t + 1][1] * beta[t + 1, 1]
+        beta[t, 1] = (
+            p.p_T * b[t + 1][0] * beta[t + 1, 0] + (1 - p.p_T) * b[t + 1][1] * beta[t + 1, 1]
+        )
     gamma = alpha * beta / ll  # 平滑后验 P(state_t | 整条序列)
     return float(np.log(ll)), gamma
 
@@ -97,7 +99,7 @@ def test_em_recovers_true_params():
     seqs = list(simulate(TRUE, n_students=2000, seq_len=30, seed=42))
     fitted = fit(seqs, init=BKTParams(p_L0=0.4, p_T=0.15, p_S=0.15, p_G=0.15))
     errs = np.abs(fitted.as_array() - TRUE.as_array())
-    for name, err in zip(("p_L0", "p_T", "p_S", "p_G"), errs):
+    for name, err in zip(("p_L0", "p_T", "p_S", "p_G"), errs, strict=True):
         assert err < 0.05, f"{name}: fitted={getattr(fitted, name):.4f} err={err:.4f}"
 
 

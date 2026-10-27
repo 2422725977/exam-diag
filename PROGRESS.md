@@ -48,3 +48,27 @@ $ python -m pytest tests/ -q
 ```
 
 验收：`import examdiag` 无报错 ✓；`pytest tests/test_schema.py` 23 passed 全绿 ✓（含环检测、未知 prereq、difficulty/id/subject 边界、三类文件加载）。
+
+## 0.5 bkt.py：前向后验 + EM 拟合（2026-10-28）
+
+产出：`examdiag/bkt.py`（纯 numpy）——`forward_posterior`（过滤后验）、`predict_next`（先转移再发射的下次答对概率）、`fit`（缩放 Baum-Welch EM，支持变长序列按长度分批，M 步闭式重估 + [0.01,0.99] 截断，收敛阈值相对变化 <1e-6 或 200 轮）、`log_likelihood`、`simulate`（合成数据生成器）。
+
+**参数恢复验收**（真实参数 p_L0=.3, p_T=.1, p_S=.1, p_G=.2 生成 2000 条长度 30 的序列，seed=42，初值 (.4,.15,.15,.15)）：
+
+```
+$ python -m pytest tests/test_bkt.py -q
+10 passed
+
+fitted: p_L0=0.3118  p_T=0.0930  p_S=0.1029  p_G=0.1978
+abs err: [0.0118, 0.0070, 0.0029, 0.0022]   # 四参数全部 < 0.05 ✓
+```
+
+正确性交叉验证：测试内置无缩放标量前向-后向参照实现，与批量缩放实现的 log-likelihood 与平滑后验一致（rel 1e-9）。变长序列恢复测试同样通过。
+
+```
+$ python -m pytest tests/ -q
+.................................                                        [100%]
+33 passed in 0.32s
+$ ruff check .
+All checks passed!
+```

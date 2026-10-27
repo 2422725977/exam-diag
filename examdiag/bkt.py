@@ -176,7 +176,8 @@ def fit(
 
 
 def log_likelihood(sequences, params: BKTParams) -> float:
-    return float(sum(_group_stats(obs, params)["loglik"] for obs in _group_by_length(sequences).values()))
+    groups = _group_by_length(sequences)
+    return float(sum(_group_stats(obs, params)["loglik"] for obs in groups.values()))
 
 
 def simulate(params: BKTParams, n_students: int, seq_len: int, seed: int = 0) -> np.ndarray:
