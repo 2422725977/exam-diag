@@ -1,12 +1,15 @@
 # ruff: noqa: E501
-"""合成 docs/demo.gif：输入错题 → 根因输出（Wave 2 任务 2.2）。
+"""合成 docs/demo.gif：三个用户、三条不同方向的薄弱链 → 三个不同根因。
 
-帧内容全部取自真实命令的真实输出（绝不手造假终端文本）：
-  1) head -3 data/demo_attempts.jsonl        —— 输入的作答记录
-  2) examdiag diagnose --attempts ... --plan —— 真实子进程 stdout 逐行揭示
+帧内容全部取自真实子进程输出（绝不手造假终端文本）：
+  $ examdiag diagnose --attempts data/demo_attempts_multi.jsonl \
+        --concepts data/concepts/ --user demo-a   → 根因 = ds.tree.traverse
+  $ ... --user demo-b                             → 根因 = os.process.sched (+死锁)
+  $ ... --user demo-c                             → 根因 = math.prob.expectation
 
-渲染：PIL 逐帧画终端风画面（Menlo + PingFang 逐字符回退，解决 CJK），
-合成：ffmpeg palettegen/paletteuse 两遍出高质量 GIF；ffmpeg 不可用时退回 PIL 帧动画。
+终端不清屏，三段依次追加，最后一屏同时呈现 3 个不同根因。
+规格：12 fps、总帧数 120-144（10-12 s）、表格完整出现后静止 ≥36 帧（≥3 s）。
+渲染 PIL（Menlo + STHeiti 逐字符回退，CJK 按 2 格宽对齐），合成 ffmpeg palette。
 
 运行：python scripts/make_gif.py   （只读 data/，不改 examdiag/）
 """
@@ -27,11 +30,16 @@ OUT = ROOT / "docs/demo.gif"
 BG = (13, 17, 23)
 FG = (230, 237, 243)
 GREEN = (126, 231, 135)
-DIM = (139, 148, 158)
 SIZE = 16
 LH = 22
 PAD = 24
 FPS = 12
+USERS = ("demo-a", "demo-b", "demo-c")
+EXPECTED_ROOT = {
+    "demo-a": "ds.tree.traverse",
+    "demo-b": "os.process.sched",
+    "demo-c": "math.prob.expectation",
+}
 
 FONT_LATIN = "/System/Library/Fonts/Menlo.ttc"
 FONT_CJK = "/System/Library/Fonts/STHeiti Medium.ttc"
@@ -53,7 +61,6 @@ def needs_cjk_font(ch: str) -> bool:
 
 
 def draw_line(draw, xy, text, fonts, fill=FG):
-    """逐字符混排：ASCII/制表符用 Menlo，CJK 用 PingFang。"""
     font_l, font_c = fonts
     x, y = xy
     for ch in text:
@@ -64,60 +71,57 @@ def draw_line(draw, xy, text, fonts, fill=FG):
 
 def text_width(text, fonts):
     font_l, font_c = fonts
-    return sum(
-        (font_c if needs_cjk_font(ch) else font_l).getlength(ch) for ch in text
-    )
+    return sum((font_c if needs_cjk_font(ch) else font_l).getlength(ch) for ch in text)
 
 
-def run_real() -> tuple[list[str], list[str]]:
-    """真实执行两条命令，拿真实输出。"""
-    head = subprocess.run(
-        ["head", "-3", "data/demo_attempts.jsonl"], cwd=ROOT,
-        capture_output=True, text=True, check=True,
-    ).stdout.rstrip("\n").split("\n")
-    env = dict(os.environ, COLUMNS="104", TERM="dumb")
-    diag = subprocess.run(
-        ["examdiag", "diagnose", "--attempts", "data/demo_attempts.jsonl",
-         "--concepts", "data/concepts/", "--plan"],
+def run_real(user: str) -> list[str]:
+    """真实执行 diagnose 子进程，返回 stdout 行；断言预期根因出现在输出里。"""
+    env = dict(os.environ, COLUMNS="96", TERM="dumb")
+    proc = subprocess.run(
+        ["examdiag", "diagnose", "--attempts", "data/demo_attempts_multi.jsonl",
+         "--concepts", "data/concepts/", "--user", user],
         cwd=ROOT, env=env, capture_output=True, text=True, check=True,
     )
-    lines = diag.stdout.rstrip("\n").split("\n")
-    assert "ds.tree.traverse" in diag.stdout, "真实输出里必须出现验收根因"
-    return head, lines
+    lines = proc.stdout.rstrip("\n").split("\n")
+    expected = EXPECTED_ROOT[user]
+    assert expected in proc.stdout, f"{user} 的真实输出里必须出现根因 {expected}"
+    return lines
+
+
+def build_frames(fonts) -> list[list[tuple[str, tuple]]]:
+    frames: list[list[tuple[str, tuple]]] = []
+    terminal: list[tuple[str, tuple]] = []
+    type_step, reveal_step = 5, 2
+
+    for idx, user in enumerate(USERS):
+        out = run_real(user)
+        cmd = (f"examdiag diagnose --attempts data/demo_attempts_multi.jsonl "
+               f"--concepts data/concepts/ --user {user}")
+        base = [*terminal, ("$ " + cmd, GREEN), ("", FG)]
+        for k in range(1, len(cmd) + 1, type_step):
+            frames.append([*base, (cmd[:k], FG)])
+        frames.append([*base, (cmd, FG)])
+        for k in range(2, len(out) + 1, reveal_step):
+            frames.append([*base, *(("  " + t, FG) for t in out[:k])])
+        terminal = [*base, *(("  " + t, FG) for t in out), ("", FG)]
+        frames.append(terminal)
+        if idx < len(USERS) - 1:
+            frames.append(terminal)  # 段间停顿 1 帧
+
+    frames += [frames[-1]] * 36  # 表格全部出现后静止 ≥3 s
+    return frames
 
 
 def main() -> None:
     fonts = load_fonts()
-    head_lines, diag_lines = run_real()
+    frames = build_frames(fonts)
+    total_s = len(frames) / FPS
+    assert 120 <= len(frames) <= 144, f"帧数 {len(frames)} 不在 120-144"
+    assert 10 <= total_s <= 12
 
-    cmd = "examdiag diagnose --attempts data/demo_attempts.jsonl --concepts data/concepts/ --plan"
-    # 阶段 A：展示输入（真实 head 输出）
-    lines_a = [("$ head -3 data/demo_attempts.jsonl", GREEN)]
-    lines_a += [(t, DIM) for t in head_lines]
-    lines_a += [("", FG), (f"$ {cmd[:0]}", FG)]
-
-    # 帧序列：A 完整显示 4 帧
-    frames: list[list[tuple[str, tuple]]] = [lines_a[:-1] + [("", FG)]] * 3
-
-    # 阶段 B：打字机敲命令
-    for k in range(1, len(cmd) + 1, 2):
-        frames.append(lines_a[:-1] + [(f"$ {cmd[:k]}", FG)])
-    frames.append(lines_a[:-1] + [(f"$ {cmd}", FG)])
-
-    # 阶段 C：真实输出逐 2 行揭示（完整命令行保留在顶部）
-    base = lines_a[:-1] + [(f"$ {cmd}", FG)]
-    for k in range(2, len(diag_lines) + 1, 2):
-        frames.append(base + [(t, FG) for t in diag_lines[:k]])
-    frames.append(base + [(t, FG) for t in diag_lines])
-
-    # 阶段 D：定格
-    frames += [base + [(t, FG) for t in diag_lines]] * 10
-
-    maxw = max(
-        int(text_width(t, fonts)) for f in frames for t, _ in f
-    ) + PAD * 2
+    maxw = int(max(text_width(t, fonts) for f in frames for t, _ in f)) + PAD * 2
     maxh = max(len(f) for f in frames) * LH + PAD * 2
-    print(f"canvas {maxw}x{maxh}, frames={len(frames)}")
+    print(f"canvas {maxw}x{maxh}, frames={len(frames)}, ~{total_s:.1f}s")
 
     tmp = Path(tempfile.mkdtemp())
     for i, fl in enumerate(frames):
@@ -146,7 +150,7 @@ def main() -> None:
                     duration=int(1000 / FPS), loop=0, optimize=True)
         print("assembled with PIL fallback")
     shutil.rmtree(tmp)
-    print(f"written {OUT} ({OUT.stat().st_size / 1024:.0f} KB), frames={len(frames)}, ~{len(frames)/FPS:.1f}s")
+    print(f"written {OUT} ({OUT.stat().st_size / 1024:.0f} KB), frames={len(frames)}, ~{total_s:.1f}s")
 
 
 if __name__ == "__main__":
