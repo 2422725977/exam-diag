@@ -12,6 +12,9 @@ P="工作目录 /Users/xi/Documents/exam-diag。先 read SPEC.md 全文了解项
 
 git branch -M main >> "$LOG" 2>&1
 
+# git push 的认证与浏览器登录是两套东西；把 gh 的 token 接给 git，实现免密推送
+$GH auth setup-git >> "$LOG" 2>&1 && echo "git credential ready (gh token)" >> "$LOG"
+
 step () {
   local name="$1"; local task="$2"
   echo "" >> "$LOG"
@@ -41,7 +44,7 @@ $task" >> "$LOG" 2>&1
 echo "===== WAVE 0 RUN $(date '+%F %T') =====" >> "$LOG"
 
 # ---- 第 0 步：先建仓库，打通后续每一步的增量上传通道 ----
-step "bootstrap" "完成 SPEC.md 8.1-8.3 的仓库初始化。这是全部任务的第一步，唯一目的是让后续每一步都能增量上传 GitHub，不要在这里写业务代码。依次执行：1) 按 SPEC 8.1 创建 MIT LICENSE（Copyright (c) 2026 Xin Xia）并 commit；2) 按 SPEC 8.3 写十行以内的极简英文 README.md；3) 确认当前分支是 main（git branch -M main）；4) 用 $GH repo view exam-diag 判断远程是否存在：不存在则执行 $GH repo create exam-diag --public --source=. --remote=origin --push --description 'Find the root-cause concept behind every wrong answer — a knowledge-tracing diagnostic engine for exam mistakes.'，已存在则先 $GH remote add origin git@github.com:2422725977/exam-diag.git 再 git push -u origin main；5) 执行 $GH repo edit --add-topic knowledge-tracing,education,bayesian-knowledge-tracing,spaced-repetition,exam,learning-analytics,python；6) 把 $GH repo view --json name,visibility,url,description 的真实输出和 git remote -v 贴进 PROGRESS.md。若 gh 认证失败或仓库已存在导致冲突，明写原因，不要伪造成功。"
+step "bootstrap" "完成 SPEC.md 8.1-8.3 的仓库初始化。这是全部任务的第一步，唯一目的是让后续每一步都能增量上传 GitHub，不要在这里写业务代码。依次执行：1) 按 SPEC 8.1 创建 MIT LICENSE（Copyright (c) 2026 Xin Xia）并 commit；2) 按 SPEC 8.3 写十行以内的极简英文 README.md；3) 确认当前分支是 main（git branch -M main）；4) 先用 $GH repo view exam-diag 判断远程是否存在（用户可能已在浏览器里手动建好，存在就**只做 push，绝不要重复创建**）：不存在则执行 $GH repo create exam-diag --public --source=. --remote=origin --push --description 'Find the root-cause concept behind every wrong answer — a knowledge-tracing diagnostic engine for exam mistakes.'，已存在则先 $GH remote add origin git@github.com:2422725977/exam-diag.git 再 git push -u origin main；5) 执行 $GH repo edit --add-topic knowledge-tracing,education,bayesian-knowledge-tracing,spaced-repetition,exam,learning-analytics,python；6) 把 $GH repo view --json name,visibility,url,description 的真实输出和 git remote -v 贴进 PROGRESS.md。若 gh 认证失败或仓库已存在导致冲突，明写原因，不要伪造成功。"
 
 # ---- 引擎优先：先让核心算法跑通 ----
 step "skeleton" "完成 SPEC.md Wave 0 的任务 0.1 和 0.2：初始化 Python 包（pyproject.toml、examdiag/__init__.py、pytest/ruff 配置），并实现 examdiag/schema.py 的 Concept/Question/Attempt 三个 pydantic 模型及校验（含 prereqs 环检测）。写 tests/test_schema.py 并跑 pytest 到全绿。把命令与输出追加到 PROGRESS.md。"
