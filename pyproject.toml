@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exam-diag"
+version = "0.1.0"
+description = "Find the root-cause concept behind every wrong answer — a knowledge-tracing diagnostic engine for exam mistakes."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Xin Xia" }]
+keywords = ["knowledge-tracing", "education", "bayesian-knowledge-tracing", "exam", "learning-analytics"]
+dependencies = [
+    "numpy>=1.24",
+    "pydantic>=2.5",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "ruff>=0.4",
+    "networkx>=3.0",
+]
+
+[project.scripts]
+examdiag = "examdiag.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["examdiag*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
