@@ -195,11 +195,11 @@ P(L_{n+1})       = P(L_n|obs) + (1 - P(L_n|obs))·p_T
 
 ### Wave 2 —— 第三晚（目标：能看 + 能传播）
 
-2.1 单文件 HTML 可视化（不用前端框架）：知识依赖图（D3 力导向或 svg 手绘）+ 节点颜色按 mastery 渐变 + 点击节点显示涉及错题。
-2.2 用 `vhs` 录 README 顶部 GIF：30 秒内展示"输入错题 → 输出根因"全过程。
-2.3 写英文 README + 中文 README（第一屏结构：一句话 → GIF → `pip install` → 3 行示例 → 为什么不是错题本）。
-2.4 `examples/demo.ipynb` 可一键运行。
-2.5 打 tag `v0.1.0`，PyPI 发布（用 `twine`，无账号则只建 GitHub Release）。
+2.1 单文件 HTML 可视化 `viz/report.html`（不用前端框架，D3 走 CDN）：知识依赖图力导向布局，节点颜色按 mastery 从红到绿渐变，点击节点显示该概念涉及的错题数与补习路径。数据由 `examdiag.cli diagnose --json` 导出后内联进 HTML，双击即可在浏览器打开。
+2.2 **GIF 录制方案（本机无 vhs/asciinema，不要尝试安装）**：写 `scripts/make_gif.py`，用 PIL 逐帧渲染终端风格的画面（等宽字体画黑底绿字的诊断输出，逐行淡入），再用已安装的 `ffmpeg` 合成为 `docs/demo.gif`，控制在 800×500、12fps、15 秒、≤2MB。要展示的核心时序：输入命令 → 表格逐行出现 → 高亮第一行根因。
+2.3 写英文 `README.md` + 中文 `README.zh-CN.md`。第一屏（不滚动可见）必须是：**一句话定位 → GIF → `pip install -e .` → 3 行示例命令 → 为什么不是错题本**。**必须诚实标注**：题库为 600 道自建题（不是真题）、benchmark 基于合成序列。禁止出现"考研真题库"字样。
+2.4 `examples/demo.ipynb` 可一键运行，输出诊断结果表格。
+2.5 打 tag `v0.3.0` 并推送（v0.1.0/v0.2.0 已被占用），不发布 PyPI。
 
 ### Wave 3 —— 第四晚（目标：论文素材 + 软著）
 
