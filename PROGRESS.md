@@ -150,3 +150,42 @@ RESULT: all checks PASSED
 - 测试基线：`pytest tests/ -q` → **41 passed**；`ruff check .` → All checks passed。
 - 执行说明：每完成一步即 commit + push（增量上传）；题库由子代理按科目串行生成（环境并发上限为 1），主会话逐科复核后提交。
 - Wave 1 待办：graph.py / diagnose.py / srs.py / cli.py、demo_attempts.jsonl 与根因诊断验收。
+
+## Wave 1（2026-10-28）：诊断能力
+
+| 任务 | 产出 | 验收 |
+|---|---|---|
+| 1.1 graph.py | networkx DAG：拓扑序/祖先闭包/最短路径/环检测，方向统一 前置→后继 | test_graph.py 8 passed |
+| 1.2 diagnose.py | SPEC 5.3 算法：概念级 BKT 拟合 → mastery；score(c)=(1-m)·Π(1-m_a)^(1/d)；症状过滤（有未掌握前置→是症状）→ mastery 升序+拓扑序取 top-3；insufficient_data（<3 次）边界 | test_diagnose.py 12 passed |
+| 1.3 srs.py | 未来 7 天每日复习序列，interval=max(1, round(6·mastery))（间隔与 mastery 反比），Day 1 全根因、最弱优先 | test_srs.py 6 passed |
+| 1.4 cli.py | `examdiag diagnose --attempts --concepts [--questions/--user/--top/--plan/--json]`，rich 彩色表格；concepts/questions 支持目录、questions 缺省自动发现 | test_cli.py 6 passed |
+| 1.5 demo 数据 | `data/demo_attempts.jsonl` 500 条（生成器 `scripts/make_demo_attempts.py`，seed 固定）：结尾 rotate×6+delete×4 连续错，traverse 先对3后连错5，前置（栈/递归/二叉树）掌握，其余 464 条 80% 正确填充 | 行数 500 ✓ |
+| 1.6 验收测试 | 断言 demo 第一根因 = `ds.tree.traverse`；rotate 只作为其下游症状出现 | test_demo_acceptance.py 5 passed |
+
+**实现要点（与 SPEC 5.3 的对应）**：score 公式按字面实现并随根因输出；第 4 步"祖先闭包内按 mastery 升序+拓扑序取前 3"实现为两段——先做症状过滤（候选若有掌握度 <0.5 的有数据前置，则其失败可被上游解释，降为症状并挂到根因的 `explains`），幸存者按 mastery 升序+拓扑序取前 3。另修复 BKT 小样本 EM 退化：全对/全错序列会把 p_S/p_G 顶到 0.99（"已掌握但总失误"与"未掌握"似然相同后验相反），检测到 p_S/p_G >0.5 即回退默认参数做前向后验。
+
+**demo 诊断真实输出**（`examdiag diagnose --attempts data/demo_attempts.jsonl --concepts data/concepts/ --plan`）：
+
+```
+                                 根因诊断报告
+┃ # ┃ 根因概念         ┃ 掌握度 ┃ 涉及错题 ┃ 补习路径（按序补）
+┃ 1 ┃ 二叉树遍历       │   0.10 │       26 │ 二叉树遍历(ds.tree.traverse)
+    │ ds.tree.traverse │        │          │  → 二叉搜索树(ds.bst.bst)
+    │                  │        │          │  → AVL平衡旋转(ds.bst.rotate)
+    │                  │        │          │  → AVL删除与综合调整(ds.bst.delete)
+
+                               未来 7 天复习计划
+┃ Day 1-7 ┃ 二叉树遍历(ds.tree.traverse)   # mastery≈0.10 → interval 1 → 每天
+```
+
+（`explains` 含 ds.bst.bst / ds.bst.rotate / ds.bst.delete / ds.forest.traverse / ds.search.btree / ds.tree.threaded——BST 旋转连续错被正确归因为遍历的下游症状。）
+
+```
+$ python -m pytest tests/ -q
+..........................................................................  [100%]
+78 passed in 0.82s
+$ ruff check .
+All checks passed!
+```
+
+依赖变更：networkx、rich 移入主依赖（pyproject）。Wave 1 打 tag `v0.2.0`。
