@@ -213,3 +213,10 @@ c631473 wave2(2.1): single-file viz/report.html (layered SVG, mastery gradient, 
 ```
 
 Wave 2 打 tag `v0.3.0`。
+
+## v0.3.1（2026-10-28）：GIF 修复 + 多用户演示
+
+- 新增 `data/demo_attempts_multi.jsonl`（493 行；生成器 `scripts/make_demo_attempts_multi.py`，seed 固定）：demo-a 弱链 树遍历→AVL（408）、demo-b 弱链 进程调度→死锁（408，图谱中 deadlock 前置是 sync，诊断为两个根因且调度更弱排第一）、demo-c 弱链 期望→方差（math1，图谱无"条件期望"节点，取真实前置边 variance ← expectation）。
+- `scripts/make_gif.py` 重写：删去 head 输入段与"未来 7 天复习计划"表；三段真实子进程（`--user demo-a/b/c`）依次追加；12 fps、140 帧 ≈ 11.7 s；末帧静止 36 帧 = 3 s。三个根因断言：`ds.tree.traverse` / `os.process.sched` / `math.prob.expectation`。
+- 修复数据污染：植入事件的选题限制为"不得挂其他植入概念"（综合题曾把 demo-b 的答对泄进调度序列）。
+- 新 GIF：**252 KB，140 帧，~11.7 s**，canvas 1058×1874，末帧同屏 3 个不同根因。

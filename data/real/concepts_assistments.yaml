@@ -1,0 +1,105 @@
+# ASSISTments skill-builder 概念（= 数据集自带 skill 标注）
+# difficulty 真实值未知，统一中性 3.0；prereqs 空（BKT 逐技能独立，无前置图）
+subject: "assistments"
+concepts:
+  - {id: asst.absolute_value, name: "Absolute Value", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.addition_whole_numbers, name: "Addition Whole Numbers", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.addition_and_subtraction_fractions, name: "Addition and Subtraction Fractions", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.addition_and_subtraction_integers, name: "Addition and Subtraction Integers", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.addition_and_subtraction_positive_decimals, name: "Addition and Subtraction Positive Decimals", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.algebraic_simplification, name: "Algebraic Simplification", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.algebraic_solving, name: "Algebraic Solving", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.angles_obtuse_acute_and_right, name: "Angles - Obtuse, Acute, and Right", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.angles_on_parallel_lines_cut_by_a_transversal, name: "Angles on Parallel Lines Cut by a Transversal", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.area_circle, name: "Area Circle", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.area_irregular_figure, name: "Area Irregular Figure", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.area_parallelogram, name: "Area Parallelogram", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.area_rectangle, name: "Area Rectangle", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.area_trapezoid, name: "Area Trapezoid", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.area_triangle, name: "Area Triangle", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.box_and_whisker, name: "Box and Whisker", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.calculations_with_similar_figures, name: "Calculations with Similar Figures", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.choose_an_equation_from_given_information, name: "Choose an Equation from Given Information", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.circle_graph, name: "Circle Graph", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.circumference, name: "Circumference", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.complementary_and_supplementary_angles, name: "Complementary and Supplementary Angles", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.congruence, name: "Congruence", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.conversion_of_fraction_decimals_percents, name: "Conversion of Fraction Decimals Percents", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.counting_methods, name: "Counting Methods", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.d_4_8_understanding_concept_of_probabilities, name: "D.4.8-understanding-concept-of-probabilities", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.distributive_property, name: "Distributive Property", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.divisibility_rules, name: "Divisibility Rules", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.division_fractions, name: "Division Fractions", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.effect_of_changing_dimensions_of_a_shape_prportionally, name: "Effect of Changing Dimensions of a Shape Prportionally", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.equation_solving_more_than_two_steps, name: "Equation Solving More Than Two Steps", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.equation_solving_two_or_fewer_steps, name: "Equation Solving Two or Fewer Steps", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.equivalent_fractions, name: "Equivalent Fractions", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.estimation, name: "Estimation", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.exponents, name: "Exponents", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.finding_percents, name: "Finding Percents", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.finding_slope_from_equation, name: "Finding Slope From Equation", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.finding_slope_from_situation, name: "Finding Slope From Situation", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.finding_slope_from_ordered_pairs, name: "Finding Slope from Ordered Pairs", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.greatest_common_factor, name: "Greatest Common Factor", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.histogram_as_table_or_graph, name: "Histogram as Table or Graph", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.interior_angles_figures_with_more_than_3_sides, name: "Interior Angles Figures with More than 3 Sides", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.interior_angles_triangle, name: "Interior Angles Triangle", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.interpreting_coordinate_graphs, name: "Interpreting Coordinate Graphs", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.least_common_multiple, name: "Least Common Multiple", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.mean, name: "Mean", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.median, name: "Median", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.midpoint, name: "Midpoint", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.multiplication_fractions, name: "Multiplication Fractions", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.multiplication_and_division_integers, name: "Multiplication and Division Integers", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.multiplication_and_division_positive_decimals, name: "Multiplication and Division Positive Decimals", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.nets_of_3d_figures, name: "Nets of 3D Figures", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.number_line, name: "Number Line", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.order_of_operations_positive_reals, name: "Order of Operations +,-,/,* () positive reals", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.order_of_operations_all, name: "Order of Operations All", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.ordering_fractions, name: "Ordering Fractions", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.ordering_integers, name: "Ordering Integers", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.ordering_positive_decimals, name: "Ordering Positive Decimals", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.parts_of_a_polyomial_terms_coefficient_monomial_exponent_variable, name: "Parts of a Polyomial, Terms, Coefficient, Monomial, Exponent, Variable", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.pattern_finding, name: "Pattern Finding", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.percent_discount, name: "Percent Discount", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.percent_of, name: "Percent Of", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.percents, name: "Percents", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.perimeter_of_a_polygon, name: "Perimeter of a Polygon", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.polynomial_factors, name: "Polynomial Factors", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.prime_number, name: "Prime Number", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.probability_of_two_distinct_events, name: "Probability of Two Distinct Events", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.probability_of_a_single_event, name: "Probability of a Single Event", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.proportion, name: "Proportion", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.pythagorean_theorem, name: "Pythagorean Theorem", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.quadratic_formula_to_solve_quadratic_equation, name: "Quadratic Formula to Solve Quadratic Equation", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.range, name: "Range", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.rate, name: "Rate", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.reading_a_ruler_or_scale, name: "Reading a Ruler or Scale", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.recognize_linear_pattern, name: "Recognize Linear Pattern", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.recognize_quadratic_pattern, name: "Recognize Quadratic Pattern", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.reflection, name: "Reflection", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.rotations, name: "Rotations", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.rounding, name: "Rounding", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.scale_factor, name: "Scale Factor", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.scatter_plot, name: "Scatter Plot", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.scientific_notation, name: "Scientific Notation", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.simplifying_expressions_positive_exponents, name: "Simplifying Expressions positive exponents", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.solving_systems_of_linear_equations, name: "Solving Systems of Linear Equations", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.solving_systems_of_linear_equations_by_graphing, name: "Solving Systems of Linear Equations by Graphing", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.solving_for_a_variable, name: "Solving for a variable", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.square_root, name: "Square Root", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.stem_and_leaf_plot, name: "Stem and Leaf Plot", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.subtraction_whole_numbers, name: "Subtraction Whole Numbers", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.surface_area_cylinder, name: "Surface Area Cylinder", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.surface_area_rectangular_prism, name: "Surface Area Rectangular Prism", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.table, name: "Table", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.translations, name: "Translations", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.unit_conversion_within_a_system, name: "Unit Conversion Within a System", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.unit_rate, name: "Unit Rate", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.venn_diagram, name: "Venn Diagram", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.volume_cylinder, name: "Volume Cylinder", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.volume_rectangular_prism, name: "Volume Rectangular Prism", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.volume_sphere, name: "Volume Sphere", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.write_linear_equation_from_graph, name: "Write Linear Equation from Graph", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.write_linear_equation_from_ordered_pairs, name: "Write Linear Equation from Ordered Pairs", subject: "assistments", difficulty: 3.0, prereqs: []}
+  - {id: asst.write_linear_equation_from_situation, name: "Write Linear Equation from Situation", subject: "assistments", difficulty: 3.0, prereqs: []}
