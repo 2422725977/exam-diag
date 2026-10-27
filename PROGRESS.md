@@ -113,3 +113,40 @@ RESULT: all checks PASSED
 ```
 
 验收：四科各恰好 60 节点 ✓；408/math1/politics 无环且无孤立节点 ✓；english 根节点 39 ≤ 40 ✓；跨文件 id 唯一 ✓。说明：english 为能力层级图（非全连接 DAG），按要求允许大量 prereqs 为空；politics 最长链 12 来自史纲线性时间轴（SPEC 明确要求"史纲按时间线性"）。
+
+## 0.4 四科题目 600 道（2026-10-28）
+
+产出：`data/questions/{408,math1,english,politics}.jsonl` 各恰好 150 行。每科分 6 批 × 25 道追加生成，每批 `wc -l` 确认；全部 `source: "self-built"`（未编造任何真题题号）；每题 1-2 个 concept（主概念排第一）。
+
+| 科目 | 行数 | 概念覆盖 | 结构说明 |
+|---|---|---|---|
+| 408 | 150 | 60/60 | 数据结构 75（含 8+ 道数字推演题）+ 组成 25 + 操作系统 25 + 网络 25 |
+| math1 | 150 | 60/60（每概念 ≥2 次） | 高数 75 / 线代 40 / 概率 35；30 余道计算题经独立数值/符号验算 |
+| english | 150 | 60/60 | 完形 35 / 语法长难句 45 / 词汇辨析 30 / 阅读 40（短文 40-90 词） |
+| politics | 150 | 60/60（每概念 ≥2 次） | 马原 62 道（41.3% ≥ 40% 达标）+ 毛中特 34 + 史纲 24 + 思修 30 |
+
+```
+$ python scripts/validate_data.py all        # 四科概念 + 四科题目 + 跨文件 id 唯一
+== concepts: 408.yaml / math1.yaml / english.yaml / politics.yaml
+== questions: 408.jsonl / math1.jsonl / english.jsonl / politics.jsonl
+RESULT: all checks PASSED
+```
+
+答案质量复核：408 抽 7 道可推演题用独立程序重算全一致（如 q408-001 行优先地址 1132、q408-052 折半 ASL=25/9、q408-130 CRC=101）；math1 代理用 Python 数值/符号方法验算 30+ 题后 0 处需修正；english/politics 逐题人工核对唯一正确项（politics 干扰项均为教材常见易混表述）。
+
+## Wave 0 完成情况（2026-10-28）
+
+| 任务 | 实际产出 | 验收 | 未完成项与原因 |
+|---|---|---|---|
+| 0.1 包初始化 | pyproject + examdiag 包 | `import examdiag` OK；`pip install -e .` 成功 | 无 |
+| 0.2 schema | Concept/Question/Attempt/ConceptGraph + 环检测 | test_schema.py 23 passed | 无 |
+| 0.3 知识点 | 4 科 × 60 = 240 节点 | `validate_data.py concepts` 四科全 PASS；跨文件 id 唯一 | 无 |
+| 0.4 题库 | 4 科 × 150 = 600 道（未降级） | `validate_data.py all` 全 PASS | 无 |
+| 0.5 BKT 引擎 | 前向后验 + 缩放 EM（纯 numpy） | 合成数据恢复误差 [0.0118, 0.0070, 0.0029, 0.0022] 全部 < 0.05 | 无 |
+| 0.6 评估 | benchmark.md | BKT AUC **0.7872** > 0.65，优于两个基线；RMSE 0.37 | ASSISTments 真实数据下载与 pyBKT 交叉比对按计划留待后续 Wave |
+| 0.7 PROGRESS | 本文件（真实命令与真实数字） | — | 无 |
+| 0.8 GitHub | 公开仓库 2422725977/exam-diag | `"visibility":"PUBLIC"`、description/topics/LICENSE 齐、每步 commit 即推 | 无 |
+
+- 测试基线：`pytest tests/ -q` → **41 passed**；`ruff check .` → All checks passed。
+- 执行说明：每完成一步即 commit + push（增量上传）；题库由子代理按科目串行生成（环境并发上限为 1），主会话逐科复核后提交。
+- Wave 1 待办：graph.py / diagnose.py / srs.py / cli.py、demo_attempts.jsonl 与根因诊断验收。
