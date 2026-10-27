@@ -72,3 +72,23 @@ $ python -m pytest tests/ -q
 $ ruff check .
 All checks passed!
 ```
+
+## 0.6 eval.py：AUC / RMSE 基线（2026-10-28）
+
+产出：`examdiag/eval.py` —— 合成多概念序列（10 概念 × 150 学生 × 12 步，每概念真实 BKT 参数随机采样 + 每学生能力偏移制造异质性），前 8 步按概念 EM 拟合、后 4 步在线预测（每步观测前给 P(答对)）；AUC 为带并列秩的 Mann-Whitney 自实现（无 sklearn）；对比基线：近 3 次均值、全局均值。运行 `python -m examdiag.eval` 生成 `benchmark.md`。
+
+```
+$ python -m examdiag.eval
+| model | AUC | RMSE |
+|---|---|---|
+| bkt-ours (EM fit) | 0.7872 | 0.37 |
+| recent-3 mean | 0.7438 | 0.4162 |
+| global mean | 0.5 | 0.4567 |
+```
+
+验收：AUC 0.7872 > 0.65 ✓，且优于两个基线；RMSE 0.37。数据集说明：按 SPEC 5.4 允许路径使用仓库内合成序列（seed=0 可复现），ASSISTments 下载与 pyBKT 交叉比对留待后续 Wave，未冒充真实数据。
+
+```
+$ python -m pytest tests/test_eval.py -q
+8 passed
+```
