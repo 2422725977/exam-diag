@@ -98,7 +98,8 @@ def validate_questions(
     else:
         check(f"{path}: 行数 >= {expect_min}（目标 {expect}）", len(rows) >= expect_min,
               f"actual={len(rows)}")
-    check(f"{path}: id 无重复", len(set(ids)) == len(ids), f"dups={[x for x in set(ids) if ids.count(x) > 1][:5]}")
+    dup_ids = sorted({x for x in set(ids) if ids.count(x) > 1})
+    check(f"{path}: id 无重复", not dup_ids, f"dups={dup_ids[:5]}")
     bad_subject = [r.get("id") for r in rows if r.get("subject") != subject]
     check(f"{path}: 所有题 subject == {subject}", not bad_subject, f"bad={bad_subject[:3]}")
     unknown = [

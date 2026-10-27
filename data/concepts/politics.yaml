@@ -1,0 +1,65 @@
+# politics（考研政治）知识点图谱 —— Wave 0 精标
+# 60 节点：马原 20（前置边建全）+ 毛中特/习思想 14 + 史纲 12（按时间线性）+ 思修法基 14（较松）
+# prereqs 只指向已声明节点（保证无环）；id 跨文件唯一（前缀 pol.marx/mao/hist/ethics）。
+subject: "politics"
+concepts:
+  - {id: pol.marx.ism.science,       name: 马克思主义的创立与科学世界观, subject: "politics", difficulty: 2, prereqs: []}
+  - {id: pol.marx.mat.matter,        name: 物质与意识,               subject: "politics", difficulty: 3, prereqs: [pol.marx.ism.science]}
+  - {id: pol.marx.mat.motion,        name: 运动与时空,               subject: "politics", difficulty: 3, prereqs: [pol.marx.mat.matter]}
+  - {id: pol.marx.mat.practice,      name: 实践观,                   subject: "politics", difficulty: 3, prereqs: [pol.marx.mat.matter]}
+  - {id: pol.marx.dialect.contradiction, name: 对立统一规律(矛盾),   subject: "politics", difficulty: 4, prereqs: [pol.marx.mat.motion]}
+  - {id: pol.marx.dialect.quality,   name: 质变量变规律,             subject: "politics", difficulty: 4, prereqs: [pol.marx.dialect.contradiction]}
+  - {id: pol.marx.dialect.negate,    name: 否定之否定规律,           subject: "politics", difficulty: 4, prereqs: [pol.marx.dialect.contradiction]}
+  - {id: pol.marx.dialect.categories, name: 唯物辩证法五大范畴,      subject: "politics", difficulty: 4, prereqs: [pol.marx.dialect.contradiction]}
+  - {id: pol.marx.epi.sense,         name: 认识与感性理性认识,       subject: "politics", difficulty: 3, prereqs: [pol.marx.mat.practice]}
+  - {id: pol.marx.epi.truth,         name: 真理与价值,               subject: "politics", difficulty: 4, prereqs: [pol.marx.epi.sense]}
+  - {id: pol.marx.hist.social,       name: 社会存在与社会意识,       subject: "politics", difficulty: 4, prereqs: [pol.marx.mat.practice, pol.marx.mat.matter]}
+  - {id: pol.marx.hist.productive,   name: 生产力与生产关系,         subject: "politics", difficulty: 4, prereqs: [pol.marx.hist.social]}
+  - {id: pol.marx.hist.economy,      name: 经济基础与上层建筑,       subject: "politics", difficulty: 4, prereqs: [pol.marx.hist.productive]}
+  - {id: pol.marx.hist.class,        name: 阶级、国家与社会形态,     subject: "politics", difficulty: 4, prereqs: [pol.marx.hist.economy]}
+  - {id: pol.marx.hist.people,       name: 人民群众与历史创造者,     subject: "politics", difficulty: 3, prereqs: [pol.marx.hist.class]}
+  - {id: pol.marx.econ.commodity,    name: 商品与劳动二重性,         subject: "politics", difficulty: 4, prereqs: []}
+  - {id: pol.marx.econ.money,        name: 货币与价值规律,           subject: "politics", difficulty: 4, prereqs: [pol.marx.econ.commodity]}
+  - {id: pol.marx.econ.surplus,      name: 劳动力与剩余价值,         subject: "politics", difficulty: 5, prereqs: [pol.marx.econ.money]}
+  - {id: pol.marx.econ.accumulation, name: 资本积累与再生产,         subject: "politics", difficulty: 5, prereqs: [pol.marx.econ.surplus]}
+  - {id: pol.marx.econ.circulation,  name: 资本循环与周转,           subject: "politics", difficulty: 5, prereqs: [pol.marx.econ.surplus]}
+  - {id: pol.mao.sinicize,           name: 马克思主义中国化,         subject: "politics", difficulty: 2, prereqs: []}
+  - {id: pol.mao.new.dem,            name: 新民主主义革命理论,       subject: "politics", difficulty: 3, prereqs: [pol.mao.sinicize]}
+  - {id: pol.mao.three.treasures,    name: 统一战线/武装斗争/党的建设, subject: "politics", difficulty: 3, prereqs: [pol.mao.new.dem]}
+  - {id: pol.mao.reform,             name: 社会主义改造理论,         subject: "politics", difficulty: 3, prereqs: [pol.mao.new.dem]}
+  - {id: pol.mao.deng.reform,        name: 改革开放与中国特色社会主义, subject: "politics", difficulty: 3, prereqs: [pol.mao.reform]}
+  - {id: pol.mao.deng.market,        name: 社会主义市场经济与基本制度, subject: "politics", difficulty: 4, prereqs: [pol.mao.deng.reform]}
+  - {id: pol.mao.newera.society,     name: 新时代与社会主要矛盾,     subject: "politics", difficulty: 3, prereqs: [pol.mao.deng.market]}
+  - {id: pol.mao.newera.economy,     name: 新发展理念与高质量发展,   subject: "politics", difficulty: 3, prereqs: [pol.mao.newera.society]}
+  - {id: pol.mao.newera.democracy,   name: 全过程人民民主,           subject: "politics", difficulty: 3, prereqs: [pol.mao.newera.society]}
+  - {id: pol.mao.newera.law,         name: 全面依法治国,             subject: "politics", difficulty: 3, prereqs: [pol.mao.newera.society]}
+  - {id: pol.mao.newera.culture,     name: 文化自信与意识形态,       subject: "politics", difficulty: 3, prereqs: [pol.mao.newera.society]}
+  - {id: pol.mao.newera.ecology,     name: 生态文明与人与自然和谐,   subject: "politics", difficulty: 3, prereqs: [pol.mao.newera.society]}
+  - {id: pol.mao.newera.diplomacy,   name: 人类命运共同体与大国外交, subject: "politics", difficulty: 3, prereqs: [pol.mao.newera.society]}
+  - {id: pol.mao.party.building,     name: 党的建设与自我革命,       subject: "politics", difficulty: 3, prereqs: [pol.mao.sinicize]}
+  - {id: pol.hist.opium,             name: 鸦片战争与半殖民地化,     subject: "politics", difficulty: 2, prereqs: []}
+  - {id: pol.hist.salvation,         name: 晚清自救(太平/洋务/维新), subject: "politics", difficulty: 3, prereqs: [pol.hist.opium]}
+  - {id: pol.hist.xinhai,            name: 辛亥革命,                 subject: "politics", difficulty: 3, prereqs: [pol.hist.salvation]}
+  - {id: pol.hist.may.fourth,        name: 五四运动与新文化运动,     subject: "politics", difficulty: 3, prereqs: [pol.hist.xinhai]}
+  - {id: pol.hist.party.founding,    name: 建党与大革命,             subject: "politics", difficulty: 3, prereqs: [pol.hist.may.fourth]}
+  - {id: pol.hist.agrarian,          name: 土地革命战争,             subject: "politics", difficulty: 3, prereqs: [pol.hist.party.founding]}
+  - {id: pol.hist.anti.japanese,     name: 抗日战争,                 subject: "politics", difficulty: 3, prereqs: [pol.hist.agrarian]}
+  - {id: pol.hist.liberation,        name: 解放战争,                 subject: "politics", difficulty: 3, prereqs: [pol.hist.anti.japanese]}
+  - {id: pol.hist.socialism,         name: 从新民主主义到社会主义,   subject: "politics", difficulty: 3, prereqs: [pol.hist.liberation]}
+  - {id: pol.hist.reform.opening,    name: 改革开放起步与探索,       subject: "politics", difficulty: 3, prereqs: [pol.hist.socialism]}
+  - {id: pol.hist.new.era,           name: 中国特色社会主义新时代,   subject: "politics", difficulty: 3, prereqs: [pol.hist.reform.opening]}
+  - {id: pol.hist.lessons,           name: 百年奋斗历史经验,         subject: "politics", difficulty: 3, prereqs: [pol.hist.new.era]}
+  - {id: pol.ethics.ideal.life,      name: 人生观与理想信念,         subject: "politics", difficulty: 2, prereqs: []}
+  - {id: pol.ethics.values,          name: 社会主义核心价值观,       subject: "politics", difficulty: 2, prereqs: [pol.ethics.ideal.life]}
+  - {id: pol.ethics.patriot,         name: 爱国主义与时代精神,       subject: "politics", difficulty: 2, prereqs: [pol.ethics.values]}
+  - {id: pol.ethics.moral.tradition, name: 中华传统美德与革命道德,   subject: "politics", difficulty: 3, prereqs: [pol.ethics.values]}
+  - {id: pol.ethics.moral.core,      name: 社会主义道德的核心与原则, subject: "politics", difficulty: 3, prereqs: [pol.ethics.values]}
+  - {id: pol.ethics.moral.practice,  name: 社会公德/职业道德/家庭美德, subject: "politics", difficulty: 3, prereqs: [pol.ethics.moral.core]}
+  - {id: pol.ethics.net,             name: 网络生活中的道德与法律,   subject: "politics", difficulty: 3, prereqs: [pol.ethics.moral.practice]}
+  - {id: pol.ethics.law.spirit,      name: 法律精神与法治思维,       subject: "politics", difficulty: 3, prereqs: []}
+  - {id: pol.ethics.constitution,    name: 宪法与法律体系,           subject: "politics", difficulty: 3, prereqs: [pol.ethics.law.spirit]}
+  - {id: pol.ethics.rights.duties,   name: 权利与义务,               subject: "politics", difficulty: 3, prereqs: [pol.ethics.constitution]}
+  - {id: pol.ethics.law.practice,    name: 依法行使权利与履行义务,   subject: "politics", difficulty: 3, prereqs: [pol.ethics.rights.duties]}
+  - {id: pol.ethics.career,          name: 职业观与择业创业,         subject: "politics", difficulty: 2, prereqs: [pol.ethics.ideal.life]}
+  - {id: pol.ethics.family,          name: 恋爱婚姻家庭观,           subject: "politics", difficulty: 2, prereqs: [pol.ethics.ideal.life]}
+  - {id: pol.ethics.striving,        name: 实现中国梦的青春担当,     subject: "politics", difficulty: 2, prereqs: [pol.ethics.ideal.life, pol.ethics.values]}
