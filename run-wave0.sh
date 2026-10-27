@@ -15,7 +15,7 @@ $task" >> "$LOG" 2>&1
   local rc=$?
   echo "===== [$name] END $(date '+%F %T') exit=$rc =====" >> "$LOG"
   git add -A >> "$LOG" 2>&1
-  git -c user.name=xi -c user.email=xi@local commit -q -m "wave0: $name" >> "$LOG" 2>&1
+  git -c user.name=xi -c user.email=2422725977@users.noreply.github.com commit -q -m "wave0: $name" >> "$LOG" 2>&1
   echo "committed: $(git rev-parse --short HEAD 2>/dev/null)" >> "$LOG"
   return 0
 }
@@ -45,6 +45,8 @@ step "questions-english" "完成 Wave 0 任务 0.4 的 english 部分：data/que
 step "questions-politics" "完成 Wave 0 任务 0.4 的 politics 部分：data/questions/politics.jsonl，150 道（单选为主，马原占比不低于 40%），concepts 必须存在于 data/concepts/politics.yaml。若时间紧张可降到 60 道并在 PROGRESS.md 明写实际数量。校验后贴进 PROGRESS.md。"
 
 step "wrapup" "完成 Wave 0 任务 0.7：检查 PROGRESS.md 是否记录了全部 7 项任务的真实命令输出与真实数字（缺的补跑补记），确认 pytest 全绿，跑一次完整的 examdiag 包导入自检。在 PROGRESS.md 末尾写『Wave 0 完成情况』小结表：每项任务 / 实际产出数量 / 验收是否通过 / 未完成项与原因。然后 git commit。"
+
+step "publish" "完成 Wave 0 任务 0.8，严格按 SPEC.md 第 8.1-8.3 节执行：1) 若仓库还没有 LICENSE 就按 SPEC 8.1 里的 MIT 全文创建并 commit；2) git branch -M main；3) 用 ~/.local/bin/gh repo view exam-diag 检查远程是否已存在，不存在则执行 gh repo create exam-diag --public --source=. --remote=origin --push --description 'Root-cause concept diagnosis for exam mistakes — a knowledge-tracing diagnostic engine.'；已存在则直接 git push -u origin main；4) 执行 gh repo edit --add-topic knowledge-tracing,education,bayesian-knowledge-tracing,spaced-repetition,exam,learning-analytics,python；5) 按 SPEC 8.3 写一个极简英文 README.md（十行以内，一句话 + pip install + 一行用法）并 push；6) 最后执行 gh repo view --json name,visibility,url,description 把真实输出贴进 PROGRESS.md。若 gh 认证失败就明写失败原因，不要伪造成功。"
 
 echo "" >> "$LOG"
 echo "===== WAVE 0 ALL DONE $(date '+%F %T') =====" >> "$LOG"

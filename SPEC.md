@@ -173,6 +173,7 @@ P(L_{n+1})       = P(L_n|obs) + (1 - P(L_n|obs))·p_T
 | 0.5 | 写 `bkt.py`：前向后验 + EM 拟合 | 纯 numpy 实现 | 合成数据（p_L0=.3,p_T=.1,p_S=.1,p_G=.2，2000 条序列）拟合，四参数误差 < 0.05 |
 | 0.6 | 写 `eval.py` 跑 AUC/RMSE | `benchmark.md` | 合成数据 AUC > 0.65；结果写进文件 |
 | 0.7 | `PROGRESS.md` 记录全部验收输出 + `git commit` | — | 含实际命令与实际数字，不许写"预计" |
+| 0.8 | **建远程仓库并 push**（见 8.1） | GitHub public 仓库 + LICENSE | `gh repo view --json name,visibility,url` 返回 public；本地与远程 commit 一致 |
 
 **D/E 是纯 LLM 标注工作量，占 4 小时。硬规则：**
 
@@ -214,9 +215,83 @@ P(L_{n+1})       = P(L_n|obs) + (1 - P(L_n|obs))·p_T
 - 不许在验收未通过时标记完成。`PROGRESS.md` 里贴真实命令输出。
 - 每波预计 4–8 小时，Wave 0 若超时，优先保 0.5/0.6（引擎 + 基线），题库标注可降到 200 道并在 PROGRESS 里写明实际数量。
 
-## 8. 发布清单（人工做，Agent 不做）
+## 8. GitHub 上传与发布
+
+### 8.1 Wave 0 一跑完就上传（任务 0.8）
+
+仓库必须 **public**。私有仓库搜不到，也涨不了 star。
+
+`gh` 已登录账号 `2422725977`（token scopes 含 `repo`），路径 `~/.local/bin/gh`。
+
+```bash
+cd ~/Documents/exam-diag
+git branch -M main
+
+cat > LICENSE <<'EOF'
+MIT License
+
+Copyright (c) 2026 Xin Xia
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+EOF
+
+git add LICENSE && git commit -m "chore: MIT license"
+
+gh repo create exam-diag --public --source=. --remote=origin --push \
+  --description "Find the root-cause concept behind every wrong answer — a knowledge-tracing diagnostic engine for exam mistakes."
+```
+
+### 8.2 About 区配置（直接决定能不能被搜到）
+
+```bash
+gh repo edit --add-topic knowledge-tracing,education,bayesian-knowledge-tracing,spaced-repetition,exam,learning-analytics,python
+```
+
+About 区三项都要填满：**Description**（上面那句）、**Topics**（上面那串）、**Website**（有 demo 页就填，没有可以留空）。Topics 是 GitHub 搜索的主要召回来源，不填等于放弃一半自然流量。
+
+### 8.3 Wave 0 结束必须补一个极简 README
+
+刚 push 的仓库没有 README，路人点进来看到裸代码会直接关掉。所以 8.1 之后**立刻**写一个 10 行的英文 README（不等 Wave 2 的完整版）：
+
+```markdown
+# exam-diag
+
+Find the **root-cause concept** behind every wrong answer — not another mistake notebook.
+
+[one GIF here later]
+
+## Install
+pip install -e .
+
+## Use
+examdiag diagnose --attempts data/demo_attempts.jsonl --concepts data/concepts/
+```
+
+验收：`gh repo view --json name,visibility,url,description` 返回 `"visibility":"PUBLIC"` 且 description 非空；浏览器打开仓库 URL 第一屏能看到那句话。
+
+### 8.4 社区发布（人工做，Agent 不碰）
 
 - 小红书 / 知乎 / B站：中文标题"我把考研错题做成了诊断报告"
 - Hacker News / r/learnmachinelearning：英文标题 "I built a root-cause diagnostic engine for exam mistakes"
 - 发布时机：开学前 2 周、考研报名期（10 月）、出分后（2 月）
-- 绝不买 star、绝不 star4star
+- 绝不买 star、绝不 star4star（违反 GitHub ToS，会被封号）
+
+### 8.5 后续每波都要 push
+
+Wave 1/2/3 每波结束 `git push`，让 GitHub 的 commit 活跃度保持连续——这是路人判断"这项目还活着吗"的第一信号。
