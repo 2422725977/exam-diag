@@ -1,0 +1,68 @@
+# math1（考研数学一）知识点图谱 —— Wave 0 精标
+# 60 节点：高等数学 30 + 线性代数 15 + 概率论与数理统计 15
+# 块内严格前置；跨块弱耦合仅保留人工确认过的两条：
+#   math.prob.cont      <- math.calc.int.def  （连续型分布需要定积分）
+#   math.calc.multivar.partial <- math.linalg.vector（多元函数用向量记号）
+# prereqs 全部指向已声明节点（保证无环）；id 跨文件唯一（前缀 math.calc/linalg/prob）。
+subject: "math1"
+concepts:
+  - {id: math.calc.func,            name: 函数与初等性质,           subject: "math1", difficulty: 2, prereqs: []}
+  - {id: math.calc.limit,           name: 极限的定义与计算,         subject: "math1", difficulty: 3, prereqs: [math.calc.func]}
+  - {id: math.calc.cont,            name: 连续性与间断点,           subject: "math1", difficulty: 3, prereqs: [math.calc.limit]}
+  - {id: math.calc.deriv,           name: 导数与微分的定义,         subject: "math1", difficulty: 3, prereqs: [math.calc.limit]}
+  - {id: math.calc.deriv.rules,     name: 求导法则与高阶导数,       subject: "math1", difficulty: 3, prereqs: [math.calc.deriv]}
+  - {id: math.calc.mean.thm,        name: 中值定理(罗尔/拉格朗日),  subject: "math1", difficulty: 5, prereqs: [math.calc.deriv, math.calc.cont]}
+  - {id: math.calc.lhopital,        name: 洛必达法则,               subject: "math1", difficulty: 3, prereqs: [math.calc.limit, math.calc.deriv.rules]}
+  - {id: math.calc.taylor,          name: 泰勒公式与麦克劳林展开,   subject: "math1", difficulty: 4, prereqs: [math.calc.deriv.rules]}
+  - {id: math.calc.mono,            name: 单调性与极值,             subject: "math1", difficulty: 3, prereqs: [math.calc.deriv.rules]}
+  - {id: math.calc.convex,          name: 凹凸性与拐点,             subject: "math1", difficulty: 3, prereqs: [math.calc.deriv.rules]}
+  - {id: math.calc.asym,            name: 渐近线,                   subject: "math1", difficulty: 3, prereqs: [math.calc.limit, math.calc.mono]}
+  - {id: math.calc.implicit,        name: 隐函数与参数方程求导,     subject: "math1", difficulty: 3, prereqs: [math.calc.deriv.rules]}
+  - {id: math.calc.int.indef,       name: 不定积分,                 subject: "math1", difficulty: 3, prereqs: [math.calc.deriv.rules]}
+  - {id: math.calc.int.sub,         name: 换元积分法,               subject: "math1", difficulty: 3, prereqs: [math.calc.int.indef]}
+  - {id: math.calc.int.parts,       name: 分部积分法,               subject: "math1", difficulty: 3, prereqs: [math.calc.int.indef]}
+  - {id: math.calc.int.rational,    name: 有理函数积分,             subject: "math1", difficulty: 4, prereqs: [math.calc.int.sub]}
+  - {id: math.calc.int.def,         name: 定积分定义与性质,         subject: "math1", difficulty: 4, prereqs: [math.calc.limit, math.calc.int.indef]}
+  - {id: math.calc.int.app,         name: 定积分应用(面积/旋转体),  subject: "math1", difficulty: 4, prereqs: [math.calc.int.def]}
+  - {id: math.calc.curvature,       name: 弧长与曲率,               subject: "math1", difficulty: 4, prereqs: [math.calc.deriv.rules, math.calc.int.app]}
+  - {id: math.calc.int.imp,         name: 反常积分,                 subject: "math1", difficulty: 4, prereqs: [math.calc.int.def]}
+  - {id: math.calc.ode,             name: 常微分方程(一阶/二阶),    subject: "math1", difficulty: 4, prereqs: [math.calc.deriv.rules, math.calc.int.indef]}
+  - {id: math.calc.series.nums,     name: 数项级数敛散性,           subject: "math1", difficulty: 4, prereqs: [math.calc.limit]}
+  - {id: math.calc.series.pow,      name: 幂级数与收敛域,           subject: "math1", difficulty: 4, prereqs: [math.calc.series.nums]}
+  - {id: math.calc.series.expand,   name: 函数展开为幂级数,         subject: "math1", difficulty: 4, prereqs: [math.calc.series.pow, math.calc.taylor]}
+  - {id: math.calc.series.fourier,  name: 傅里叶级数,               subject: "math1", difficulty: 5, prereqs: [math.calc.series.expand]}
+  - {id: math.calc.multivar.partial, name: 多元函数与偏导数,        subject: "math1", difficulty: 4, prereqs: [math.calc.deriv.rules, math.linalg.vector]}
+  - {id: math.calc.multivar.extrema, name: 多元函数极值与条件极值,  subject: "math1", difficulty: 5, prereqs: [math.calc.multivar.partial]}
+  - {id: math.calc.dirderiv,        name: 方向导数与梯度,           subject: "math1", difficulty: 5, prereqs: [math.calc.multivar.partial, math.linalg.vector]}
+  - {id: math.calc.int.double,      name: 二重积分,                 subject: "math1", difficulty: 4, prereqs: [math.calc.int.def, math.calc.multivar.partial]}
+  - {id: math.calc.int.curve,       name: 三重积分与曲线曲面积分,   subject: "math1", difficulty: 5, prereqs: [math.calc.int.double]}
+  - {id: math.linalg.vector,        name: 向量与线性组合,           subject: "math1", difficulty: 2, prereqs: []}
+  - {id: math.linalg.matrix,        name: 矩阵及其运算,             subject: "math1", difficulty: 2, prereqs: []}
+  - {id: math.linalg.det,           name: 行列式的定义,             subject: "math1", difficulty: 3, prereqs: [math.linalg.matrix]}
+  - {id: math.linalg.det.props,     name: 行列式性质与按行列展开,   subject: "math1", difficulty: 3, prereqs: [math.linalg.det]}
+  - {id: math.linalg.inverse,       name: 逆矩阵,                   subject: "math1", difficulty: 3, prereqs: [math.linalg.matrix, math.linalg.det]}
+  - {id: math.linalg.rank,          name: 矩阵的秩,                 subject: "math1", difficulty: 3, prereqs: [math.linalg.matrix]}
+  - {id: math.linalg.linear.sys,    name: 线性方程组求解,           subject: "math1", difficulty: 3, prereqs: [math.linalg.inverse, math.linalg.rank]}
+  - {id: math.linalg.solve.struct,  name: 解的结构与基础解系,       subject: "math1", difficulty: 4, prereqs: [math.linalg.linear.sys, math.linalg.rank]}
+  - {id: math.linalg.independence,  name: 线性相关与线性无关,       subject: "math1", difficulty: 4, prereqs: [math.linalg.vector]}
+  - {id: math.linalg.basis,         name: 基、维数与坐标,           subject: "math1", difficulty: 4, prereqs: [math.linalg.independence, math.linalg.rank]}
+  - {id: math.linalg.orthogonal,    name: 正交化与正交矩阵,         subject: "math1", difficulty: 4, prereqs: [math.linalg.vector, math.linalg.basis]}
+  - {id: math.linalg.eigen,         name: 特征值与特征向量,         subject: "math1", difficulty: 4, prereqs: [math.linalg.basis, math.linalg.det]}
+  - {id: math.linalg.diagonal,      name: 相似与对角化,             subject: "math1", difficulty: 5, prereqs: [math.linalg.eigen]}
+  - {id: math.linalg.quadratic,     name: 二次型与标准形,           subject: "math1", difficulty: 5, prereqs: [math.linalg.diagonal]}
+  - {id: math.linalg.positive,      name: 正定二次型,               subject: "math1", difficulty: 4, prereqs: [math.linalg.quadratic]}
+  - {id: math.prob.events,          name: 随机事件与概率公式,       subject: "math1", difficulty: 2, prereqs: []}
+  - {id: math.prob.cond,            name: 条件概率与全概率公式,     subject: "math1", difficulty: 3, prereqs: [math.prob.events]}
+  - {id: math.prob.indep,           name: 事件独立性,               subject: "math1", difficulty: 3, prereqs: [math.prob.events]}
+  - {id: math.prob.rv,              name: 随机变量与分布函数,       subject: "math1", difficulty: 3, prereqs: [math.prob.events]}
+  - {id: math.prob.discrete,        name: 离散型与常见分布,         subject: "math1", difficulty: 3, prereqs: [math.prob.rv]}
+  - {id: math.prob.cont,            name: 连续型与常见分布,         subject: "math1", difficulty: 4, prereqs: [math.prob.rv, math.calc.int.def]}
+  - {id: math.prob.rv.func,         name: 随机变量函数的分布,       subject: "math1", difficulty: 4, prereqs: [math.prob.discrete, math.prob.cont]}
+  - {id: math.prob.expectation,     name: 期望,                     subject: "math1", difficulty: 3, prereqs: [math.prob.discrete, math.prob.cont]}
+  - {id: math.prob.variance,        name: 方差,                     subject: "math1", difficulty: 3, prereqs: [math.prob.expectation]}
+  - {id: math.prob.cov,             name: 协方差与相关系数,         subject: "math1", difficulty: 4, prereqs: [math.prob.variance]}
+  - {id: math.prob.chebyshev,       name: 切比雪夫不等式与大数定律, subject: "math1", difficulty: 4, prereqs: [math.prob.variance]}
+  - {id: math.prob.clt,             name: 中心极限定理,             subject: "math1", difficulty: 4, prereqs: [math.prob.chebyshev]}
+  - {id: math.prob.sample,          name: 抽样分布(卡方/t/F),       subject: "math1", difficulty: 5, prereqs: [math.prob.variance, math.prob.cont]}
+  - {id: math.prob.estimate,        name: 点估计(矩/最大似然),      subject: "math1", difficulty: 4, prereqs: [math.prob.sample]}
+  - {id: math.prob.interval,        name: 置信区间,                 subject: "math1", difficulty: 4, prereqs: [math.prob.estimate, math.prob.sample]}
