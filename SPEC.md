@@ -223,6 +223,15 @@ P(L_{n+1})       = P(L_n|obs) + (1 - P(L_n|obs))·p_T
 
 `gh` 已登录账号 `2422725977`（token scopes 含 `repo`），路径 `~/.local/bin/gh`。
 
+**commit 身份**：用 GitHub 分配的 noreply 地址，不是真实邮箱——
+
+```bash
+git config user.name xi
+git config user.email "70122327+2422725977@users.noreply.github.com"
+```
+
+这个地址由账号 ID（70122327）和 login 拼成，邮件发进去收不到，作用只是让 GitHub 把 commit 认领到你的账号上。不做这步，所有提交在 profile 贡献图里都是一片空白。
+
 ```bash
 cd ~/Documents/exam-diag
 git branch -M main
@@ -292,6 +301,12 @@ examdiag diagnose --attempts data/demo_attempts.jsonl --concepts data/concepts/
 - 发布时机：开学前 2 周、考研报名期（10 月）、出分后（2 月）
 - 绝不买 star、绝不 star4star（违反 GitHub ToS，会被封号）
 
-### 8.5 后续每波都要 push
+### 8.5 增量上传：每完成一个任务就 push 一次
 
-Wave 1/2/3 每波结束 `git push`，让 GitHub 的 commit 活跃度保持连续——这是路人判断"这项目还活着吗"的第一信号。
+不要憋到最后一次性推。正确节奏是 **每完成一个任务 → commit → push**：知识点标完一科推一次，题库做完一科推一次。三个理由：
+
+1. 6 小时的产出随时有异地备份，本机出事不丢；
+2. GitHub 上 commit 时间线连续，路人点进来看提交记录会判断"这项目在活着"；
+3. 做到一半被打断，第二天从最后一个 commit 接着来，不用重跑。
+
+Wave 1/2/3 沿用同一节奏，每波结束打一个 tag（`v0.2.0`、`v0.3.0`…），让版本可回溯。
