@@ -95,7 +95,9 @@ def pybkt_fold(fold: int, train_seqs, test_seqs) -> tuple[list[float], list[int]
 
     train_df, test_df = to_df(train_seqs), to_df(test_seqs)
     t0 = time.time()
-    model = Model()
+    # parallel=False：pyBKT 默认 multiprocessing 池在 macOS spawn 下死锁
+    # （semaphore 等待，py-spy/sample 实测）；并行只影响执行方式不影响 EM 结果
+    model = Model(parallel=False)
     model.fit(data=train_df)
     fit_s = time.time() - t0
     res = model.predict(data=test_df)
@@ -104,35 +106,54 @@ def pybkt_fold(fold: int, train_seqs, test_seqs) -> tuple[list[float], list[int]
     return preds, truths, fit_s
 
 
-def main() -> None:
+def run_fold(k: int) -> dict:
+    """单折：自写 BKT + pyBKT 各跑一遍，返回指标（供进程池并行）。"""
     seqs = load_sequences()
     users = sorted(seqs)
     folds = defaultdict(list)
     for u in users:
         folds[fold_of(u)].append(u)
+    test_users = set(folds[k])
+    train_seqs = {u: s for u, s in seqs.items() if u not in test_users}
+    test_seqs = {u: s for u, s in seqs.items() if u in test_users}
+
+    print(f"[fold {k}] own BKT fitting...", flush=True)
+    own_preds, own_truth = own_bkt_fold(train_seqs, test_seqs)
+    print(f"[fold {k}] own done ({len(own_preds):,} preds); pyBKT fitting...", flush=True)
+    py_preds, py_truth, fit_s = pybkt_fold(k, train_seqs, test_seqs)
+    print(f"[fold {k}] pyBKT done", flush=True)
+    return {
+        "fold": k,
+        "n_train": len(train_seqs), "n_test": len(test_seqs),
+        "own": {"preds": own_preds, "truth": own_truth},
+        "py": {"preds": py_preds, "truth": py_truth},
+        "fit_s": fit_s,
+    }
+
+
+def main() -> None:
+    # Pool 一次性拉满 5 个 worker（ProcessPoolExecutor 在 3.14 上懒启动只出 2 个）
+    from multiprocessing import Pool
+
+    with Pool(N_FOLDS) as pool:
+        results = pool.map(run_fold, range(N_FOLDS))
 
     own_all, py_all = [], []
     rows = ["# ASSISTments 真实数据 5 折 CV：自写 BKT vs pyBKT", "",
-            "协议：按用户分折；训练只用各自默认初始化（无调参）；预测为观测前在线预测。", "",
+            "协议：按用户分折；训练只用各自默认初始化（无调参）；预测为观测前在线预测。"
+            "（折间并行仅为省墙钟，协议不变）", "",
             "| fold | users(train/test) | own AUC | own RMSE | pyBKT AUC | pyBKT RMSE | pyBKT fit(s) |",
             "|---|---|---|---|---|---|---|"]
-    for k in range(N_FOLDS):
-        test_users = set(folds[k])
-        train_seqs = {u: s for u, s in seqs.items() if u not in test_users}
-        test_seqs = {u: s for u, s in seqs.items() if u in test_users}
-
-        own_preds, own_truth = own_bkt_fold(train_seqs, test_seqs)
-        py_preds, py_truth, fit_s = pybkt_fold(k, train_seqs, test_seqs)
-        own_all += list(zip(own_preds, own_truth, strict=True))
-        py_all += list(zip(py_preds, py_truth, strict=True))
-
-        o_a = auc_score(own_truth, own_preds)
-        o_r = rmse_score(own_truth, own_preds)
-        p_a = auc_score(py_truth, py_preds)
-        p_r = rmse_score(py_truth, py_preds)
-        rows.append(f"| {k} | {len(train_seqs)}/{len(test_seqs)} | {o_a:.4f} | {o_r:.4f} | "
-                    f"{p_a:.4f} | {p_r:.4f} | {fit_s:.1f} |")
-        print(f"fold {k}: own AUC={o_a:.4f} pyBKT AUC={p_a:.4f}", flush=True)
+    for res in results:
+        o_a = auc_score(res["own"]["truth"], res["own"]["preds"])
+        o_r = rmse_score(res["own"]["truth"], res["own"]["preds"])
+        p_a = auc_score(res["py"]["truth"], res["py"]["preds"])
+        p_r = rmse_score(res["py"]["truth"], res["py"]["preds"])
+        own_all += list(zip(res["own"]["preds"], res["own"]["truth"], strict=True))
+        py_all += list(zip(res["py"]["preds"], res["py"]["truth"], strict=True))
+        rows.append(f"| {res['fold']} | {res['n_train']}/{res['n_test']} | {o_a:.4f} | {o_r:.4f} | "
+                    f"{p_a:.4f} | {p_r:.4f} | {res['fit_s']:.1f} |")
+        print(f"fold {res['fold']}: own AUC={o_a:.4f} pyBKT AUC={p_a:.4f}", flush=True)
 
     own_a = auc_score([t for _, t in own_all], [p for p, _ in own_all])
     own_r = rmse_score([t for _, t in own_all], [p for p, _ in own_all])

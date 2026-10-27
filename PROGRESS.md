@@ -220,3 +220,65 @@ Wave 2 打 tag `v0.3.0`。
 - `scripts/make_gif.py` 重写：删去 head 输入段与"未来 7 天复习计划"表；三段真实子进程（`--user demo-a/b/c`）依次追加；12 fps、140 帧 ≈ 11.7 s；末帧静止 36 帧 = 3 s。三个根因断言：`ds.tree.traverse` / `os.process.sched` / `math.prob.expectation`。
 - 修复数据污染：植入事件的选题限制为"不得挂其他植入概念"（综合题曾把 demo-b 的答对泄进调度序列）。
 - 新 GIF：**252 KB，140 帧，~11.7 s**，canvas 1058×1874，末帧同屏 3 个不同根因。
+
+## Wave 3（2026-10-28）：真实数据验证
+
+### 3.1 下载（scripts/download_assistments.py）
+
+| 候选源 | 结果 |
+|---|---|
+| 官方 Google Sites（corrected / original） | **失败**：curl rc=7 连接拒绝（本机网络不可达，2ms 即失败） |
+| hf-mirror.com OloriBern/assistments-dataset | **成功** 61.4 MB，表头校验通过（含 order_id/user_id/correct 列） |
+| GitHub codeload 镜像 | 未用到（前一候选已成功） |
+
+数据集说明（如实）：SPEC 5.4 指名的 2012-13 全量（约 340 MB）在本机无可达镜像；
+实际落盘为同一官方发布的 **skill-builder corrected 版（2009-10，346,860 行）**，
+即 pyBKT 教程的标准对比数据集。下载日志：`data/real/raw/DOWNLOAD_LOG.md`
+（raw CSV 本身不进 git，见 .gitignore）。未写 DOWNLOAD_FAILED.md（下载成功）。
+
+### 3.2 转换（scripts/convert_assistments.py → data/real/CONVERSION_REPORT.md）
+
+```
+输入行数：346,860
+输出 attempts：274,590（用户 4,151，question 16,891，skill 101）
+丢弃行：缺 user/problem 0；空 skill 72,270；correct 非 0/1 0
+一题多技能：0 个
+ts 说明：由 order_id 合成单调时间戳（原始数据无逐条时间）
+```
+
+产出：`data/real/assistments.jsonl`（Attempt 格式）、`data/real/skills.jsonl`
+(question→skill 映射)、`data/real/concepts_assistments.yaml`（101 技能节点，
+difficulty 中性 3.0、prereqs 空——真实数据集无前置图；subject 用数据集名，
+不走四科枚举校验）。
+
+### 3.3 对比（scripts/compare_bkt.py → data/real/COMPARE_REPORT.md）
+
+协议：按 user_id md5%5 分 5 折；训练只用各自默认初始化（无调参）；预测为
+观测前在线预测（pyBKT 的 predict 语义已从源码确认为同协议，无泄漏）。折间
+并行仅省墙钟，协议不变。
+
+```
+fold 0: own AUC=0.7043 pyBKT AUC=0.7040
+fold 1: own AUC=0.7037 pyBKT AUC=0.7037
+fold 2: own AUC=0.7182 pyBKT AUC=0.7179
+fold 3: own AUC=0.7112 pyBKT AUC=0.7104
+fold 4: own AUC=0.7218 pyBKT AUC=0.7223
+汇总：自写 BKT AUC 0.7118 / RMSE 0.4396
+      pyBKT     AUC 0.7116 / RMSE 0.4397
+AUC 差距 0.0002 → 闸门 <0.02 → PASS（未创建 STOP 文件）
+```
+
+pyBKT 兼容性垫片（site-packages，非本仓库代码，均已记录）：
+1. `pyBKT/util/metrics.py` 指标探测逐项容错（sklearn≥1.7 拒绝 list 输入）；
+2. `pyBKT/fit/EM_fit.py` L43 numpy≥2 禁止 (1,1) 数组赋标量槽位 → `.item()`；
+3. `Model(parallel=False)`：默认 multiprocessing 池在 macOS spawn 下信号量死锁
+   （sample 实测 SemLock_acquire 挂起）——并行只影响执行方式不影响 EM 结果。
+另：pyBKT 对个别技能的 EM 有 divide-by-zero RuntimeWarning（其内部数值处理，
+预测仍正常产出）。
+
+### 3.4 benchmark.md 重构
+
+真实数据（ASSISTments 5 折 CV）置于文件最前，合成数据降级为"补充基线"并
+新增 dataset 列。所有数字均来自上面真实运行输出。
+
+Wave 3 打 tag `v0.4.0`。
