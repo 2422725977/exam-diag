@@ -189,3 +189,27 @@ All checks passed!
 ```
 
 依赖变更：networkx、rich 移入主依赖（pyproject）。Wave 1 打 tag `v0.2.0`。
+
+## Wave 2（2026-10-28）：能看 + 能传播
+
+| 任务 | 产出 | 验收 |
+|---|---|---|
+| 2.1 可视化 | `viz/report.html`（49 KB 单文件，无框架）+ 生成器 `scripts/make_report.py` | 60 节点 SVG 分层布局（最长前置链定层）、mastery 红→黄→绿渐变、点击节点显示涉及错题、根因补习路径加粗；HTML 由真实 diagnose 数据生成 |
+| 2.2 GIF | `docs/demo.gif`（59 KB，68 帧 ≈ 5.7 s，1088×642）+ `scripts/make_gif.py`（PIL 逐帧 + ffmpeg palettegen/paletteuse） | 帧内容全部取自真实命令输出：`head -3 data/demo_attempts.jsonl`（输入）→ `examdiag diagnose --attempts ... --plan`（真实子进程 stdout 逐行揭示）；脚本内置断言输出含 `ds.tree.traverse` |
+| 2.3 双语 README | `README.md`（英）+ `README.zh-CN.md`（中），第一屏：一句话 → GIF → `pip install -e .` → 示例输出 → 为什么不是错题本 | 两份 README 均无"真题"字样（题库如实描述为 600 道自建题）；`grep -rn 真题 README*.md` 零命中 |
+| 2.4 notebook | `examples/demo.ipynb`（+ 生成器 `scripts/make_notebook.py`） | nbclient 实跑通过（cwd=examples/，相对路径 `../data/`），提交的版本**带执行输出**，GitHub 可直接看到结果 |
+| 2.5 tag | `v0.3.0` | 推送至 origin |
+
+GIF 渲染细节备忘：Menlo 自带 box-drawing 字形（10px 等宽可无缝拼表格边），只把真 CJK（≥U+2E80）路由给 STHeiti 且字号取 SIZE+4（全角 = 20px = Menlo 两格），与 rich 的"CJK 记 2 格"宽度约定一致，表格边线才能对齐。
+
+硬规则遵守：未修改 `examdiag/` 与 `data/` 下任何文件；`benchmark.md` 未动；README 无"真题"。
+
+```
+$ git log --oneline -5   # Wave 2
+d69c648 wave2(2.4): examples/demo.ipynb runnable walkthrough (committed with executed outputs)
+dadbcd9 wave2(2.3): bilingual README with first-screen structure (gif/install/example/why)
+97386e5 wave2(2.2): make_gif.py (PIL frames + ffmpeg palette) -> docs/demo.gif from real diagnose output
+c631473 wave2(2.1): single-file viz/report.html (layered SVG, mastery gradient, click-for-wrong-questions) + generator
+```
+
+Wave 2 打 tag `v0.3.0`。
