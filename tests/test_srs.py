@@ -74,7 +74,6 @@ def test_to_dict_shape():
 from examdiag.srs import (  # noqa: E402
     EF_MAX,
     EF_MIN,
-    SM2Config,
     SM2Item,
     ef_from_mastery,
     sm2_plan,

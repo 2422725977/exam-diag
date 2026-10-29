@@ -58,6 +58,7 @@ class SM2Item:
     interval: int = 0
     reps: int = 0
     due_day: int = 1
+    deferrals: int = 0  # 被每日上限顺延的次数（老化计数，防饿死）
 
 
 @dataclass
@@ -71,7 +72,9 @@ def ef_from_mastery(mastery: float, ef_min: float = EF_MIN, ef_max: float = EF_M
     return ef_min + (ef_max - ef_min) * min(max(mastery, 0.0), 1.0)
 
 
-def sm2_review(item: SM2Item, grade: int, ef_min: float = EF_MIN, ef_max: float = EF_MAX) -> SM2Item:
+def sm2_review(
+    item: SM2Item, grade: int, ef_min: float = EF_MIN, ef_max: float = EF_MAX
+) -> SM2Item:
     """SM-2 一步复习更新：grade ∈ 0..5（5=秒答，<3 视为没记住）。
 
     - EF 调整：EF' = EF + (0.1 - (5-q)·(0.08 + (5-q)·0.02))，截断到 [EF_MIN, EF_MAX]；
@@ -82,7 +85,7 @@ def sm2_review(item: SM2Item, grade: int, ef_min: float = EF_MIN, ef_max: float 
     ef = item.easiness + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02))
     ef = min(max(ef, ef_min), ef_max)
     if q < 3:
-        return SM2Item(item.concept_id, ef, 1, 0, item.due_day + 1)
+        return SM2Item(item.concept_id, ef, 1, 0, item.due_day + 1, 0)
     reps = item.reps + 1
     if reps <= len(SEED_INTERVALS):
         interval = SEED_INTERVALS[reps - 1]
@@ -109,29 +112,33 @@ def sm2_plan(
     """SM-2 调度：根因为初始队列，返回 horizon 天的每日概念序列。
 
     - 每个根因的 EF 由其掌握度初始化（越弱 EF 越低、间隔长得越慢）；
-    - 每天先收"到期项"（掌握度升序），超过 max_per_day 的顺延到次日；
+    - 每天先收"到期项"，超过 max_per_day 的顺延到次日；
+    - 排序 = 老化优先（顺延次数多的先出队）再按掌握度升序——防止天天失败的
+      弱项把被顺延的强项永久挤出队列（测试驱动的修复）；
     - grades[(day, concept_id)] 可注入每日复习质量（0-5）做模拟；
       缺省用掌握度映射的确定性 grade。
     """
     cfg_grades = grades or {}
     items = {
-        rc.concept_id: SM2Item(
-            rc.concept_id, ef_from_mastery(rc.mastery), due_day=1
-        )
+        rc.concept_id: SM2Item(rc.concept_id, ef_from_mastery(rc.mastery), due_day=1)
         for rc in diagnosis.root_causes
     }
     plans: list[DayPlan] = []
     for day in range(1, horizon + 1):
         due = sorted(
             (it for it in items.values() if it.due_day == day),
-            key=lambda it: (diagnosis.mastery.get(it.concept_id, 0.0), it.concept_id),
+            key=lambda it: (-it.deferrals,
+                            diagnosis.mastery.get(it.concept_id, 0.0), it.concept_id),
         )
         today, deferred = due[:max_per_day], due[max_per_day:]
         for it in deferred:
             it.due_day = day + 1
+            it.deferrals += 1
         for it in today:
-            g = cfg_grades.get((day, it.concept_id), _default_grade(diagnosis.mastery.get(it.concept_id, 0.0)))
-            updated = sm2_review(it, g)
-            items[it.concept_id] = updated
+            g = cfg_grades.get(
+                (day, it.concept_id),
+                _default_grade(diagnosis.mastery.get(it.concept_id, 0.0)),
+            )
+            items[it.concept_id] = sm2_review(it, g)
         plans.append(DayPlan(day=day, concepts=[it.concept_id for it in today]))
     return plans
