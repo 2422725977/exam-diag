@@ -111,3 +111,55 @@ def test_cli_user_filter_and_top(world, capsys):
         "--json",
     ])
     assert rc == 1  # 该用户无作答 → 报错退出
+
+
+def test_version_closed_loop(capsys):
+    """--version 输出全称+版本（名称/版本四处一致闭环的运行侧证据）。"""
+    from examdiag import __version__
+    with pytest.raises(SystemExit) as e:
+        main(["--version"])
+    assert e.value.code == 0
+    out = capsys.readouterr().out
+    assert "考试错题根因诊断系统" in out
+    assert f"V{__version__}" in out
+
+
+def test_report_subcommand_md(world, tmp_path):
+    rc = main([
+        "report",
+        "--attempts", str(world / "attempts.jsonl"),
+        "--concepts", str(world / "concepts"),
+        "--format", "md",
+        "--out", str(tmp_path / "r.md"),
+    ])
+    assert rc == 0
+    text = (tmp_path / "r.md").read_text(encoding="utf-8")
+    assert "根因" in text and "s.b" in text
+
+
+def test_report_subcommand_csv(world, tmp_path):
+    out = tmp_path / "r.csv"
+    rc = main([
+        "report",
+        "--attempts", str(world / "attempts.jsonl"),
+        "--concepts", str(world / "concepts"),
+        "--format", "csv",
+        "--out", str(out),
+    ])
+    assert rc == 0
+    assert out.read_bytes().startswith(b"\xef\xbb\xbf")
+
+
+def test_config_affects_top_n(world, tmp_path, capsys):
+    cfg = tmp_path / "c.toml"
+    cfg.write_text("[diagnose]\ntop_n = 1\n", encoding="utf-8")
+    rc = main([
+        "diagnose",
+        "--attempts", str(world / "attempts.jsonl"),
+        "--concepts", str(world / "concepts"),
+        "--config", str(cfg),
+        "--json",
+    ])
+    assert rc == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert len(payload["root_causes"]) == 1  # top_n 来自配置

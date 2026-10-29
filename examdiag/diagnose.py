@@ -146,6 +146,7 @@ def diagnose(
     concepts: ConceptGraph,
     user_id: str | None = None,
     top_n: int = 3,
+    mastery_threshold: float = MASTERY_THRESHOLD,
 ) -> Diagnosis:
     g = build(concepts)
     qmap = {q.id: q for q in questions}
@@ -174,9 +175,9 @@ def diagnose(
     survivors = [
         c
         for c in candidates
-        if mastery[c] < MASTERY_THRESHOLD
+        if mastery[c] < mastery_threshold
         and not any(
-            a in mastery and mastery[a] < MASTERY_THRESHOLD for a in ancestors(g, c)
+            a in mastery and mastery[a] < mastery_threshold for a in ancestors(g, c)
         )
     ]
     survivors.sort(key=lambda c: (mastery[c], topo_idx[c]))
