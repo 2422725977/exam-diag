@@ -43,6 +43,8 @@ ASSISTments skill-builder（27.4 万条作答）上与学术界标准实现 pyBK
 | 复习计划 | `examdiag diagnose --plan` | 输出未来 7 天每日复习概念序列 |
 | JSON 输出 | `examdiag diagnose --json` | 供脚本消费的结构化输出 |
 | 可视化报告 | `viz/report.html` | 单文件网页：依赖图 + 掌握度着色 + 点击查错题 |
+| 报告导出 | `examdiag report` | 一条命令导出 Markdown / CSV / Excel / HTML 报告 |
+| 配置文件 | `~/.examdiag.toml` | 可选：自定义根因个数、掌握度阈值、每日复习上限等 |
 | 数据校验 | `python scripts/validate_data.py` | 校验概念图谱与题库的完整性与一致性 |
 | 评测基准 | `python -m examdiag.eval` | 下次作答预测 AUC / RMSE |
 
@@ -59,10 +61,13 @@ data/questions/*.jsonl ──► schema.Question
 bkt.py（逐概念 EM 拟合 → 掌握度）──► graph.py（networkx DAG：祖先闭包/最短路）
         │                                     │
         ▼                                     ▼
-diagnose.py（症状过滤 + 根因排序 + 补习路径）──► srs.py（7 天复习计划）
+diagnose.py（症状过滤 + 根因排序 + 补习路径）──► srs.py（轻量计划 / SM-2 调度）
         │
         ▼
-cli.py（rich 表格输出 / JSON）──► viz/report.html（浏览器可视化）
+report.py（Markdown/CSV/Excel/HTML 导出）──► cli.py（rich 表格 / JSON）
+        │
+        ▼
+config.py（~/.examdiag.toml 可选配置）──► viz/report.html（浏览器可视化）
 ```
 
 各模块职责单一：schema 负责"数据是否合法"，bkt 负责"掌握度是多少"，
@@ -90,7 +95,14 @@ dataclass 传递数据，任何一层都可以独立替换或单独测试（test
 | 内存 | ≥ 4 GB（推荐 8 GB 以上） | 16 GB |
 | 磁盘 | ≥ 500 MB 可用空间（含数据与依赖） | — |
 
-### 2.2 软件环境
+### 2.2 版本自检
+
+`examdiag --version` 让程序自报家门——源代码版本常量、命令行输出、本手册、
+源程序册页眉四处出现完全一致的软件全称与版本号：
+
+![版本自检](assets/shot_version.png)
+
+### 2.3 软件环境
 
 | 项目 | 版本 |
 |---|---|
@@ -397,7 +409,21 @@ os.process.deadlock, os.process.process, os.process.sync
 ![补习路径](assets/shot_remedy.png)
 
 在 `examdiag diagnose` 命令上加 `--plan` 参数可直接输出"未来 7 天复习计划"
-表格（每行一天，列出当天应复习的概念，休息日显示"休息"）。
+表格（每行一天，列出当天应复习的概念，休息日显示"休息"）；追加 `--sm2`
+可切换到 SM-2 调度。
+
+### 5.3.1 SM-2 调度器（srs.py 扩展）
+
+轻量版之外，系统内置完整的 SM-2 变体调度器：
+
+- **easiness（EF）由掌握度初始化**：EF = 1.3 + 1.5 × mastery，掌握越好间隔
+  增长越快；
+- **每日复习质量 grade ∈ 0–5**：EF' = EF + (0.1 − (5−q)·(0.08+(5−q)·0.02))，
+  截断到 [1.3, 2.8]；grade < 3 视为没记住（连续成功清零、间隔回 1）；
+- **间隔递增**：连续成功时按种子序列 1 → 3 → 7 天递增，之后 interval =
+  round(interval × EF)；
+- **每日队列上限**：默认每天最多 20 项，超员顺延；顺延项带老化优先级，
+  防止天天失败的弱项把被顺延的概念永久挤出队列（该缺陷由单元测试发现并修复）。
 
 ### 5.4 可视化模块（scripts/make_report.py 生成 viz/report.html）
 
@@ -462,7 +488,7 @@ subject 一致性、prereq 引用与无环、孤立节点、根节点数量（�
 
 ![数据校验](assets/shot_validate.png)
 
-# exam-diag 考试错题根因诊断系统 用户手册（V0.5.0）
+# exam-diag 考试错题根因诊断系统 用户手册（V0.6.0）
 
 本文档是"考试错题根因诊断系统"（软件简称 exam-diag）V0.5.0 版本的用户操作手册，
 全部内容基于软件的真实运行结果编写：文中截图均来自软件在本机执行的真实输出，
@@ -472,11 +498,29 @@ subject 一致性、prereq 引用与无环、孤立节点、根节点数量（�
 |---|---|
 | 软件全称 | exam-diag 考试错题根因诊断系统 |
 | 软件简称 | exam-diag |
-| 版本号 | V0.5.0 |
+| 版本号 | V0.6.0 |
 | 编写日期 | 2026-10-30 |
-| 适用范围 | 本手册适用于 V0.5.0 及其后续兼容版本，覆盖安装、数据准备、五大模块操作、评测与故障处理 |
+| 适用范围 | 本手册适用于 V0.6.0 及其后续兼容版本，覆盖安装、数据准备、五大模块操作、评测与故障处理 |
 
 <!-- pagebreak -->
+
+### 5.6 报告导出模块（examdiag/report.py 与 `examdiag report`）
+
+**功能**：一条命令把诊断结果落成四种格式的报告文件：
+
+| 格式 | 命令 | 内容 |
+|---|---|---|
+| Markdown | `examdiag report --format md` | 人读报告：根因表、逐根因详情、insufficient_data、7 天计划 |
+| CSV | `examdiag report --format csv` | 错题→根因→补救练习 映射表（utf-8-sig，Excel 直接打开） |
+| Excel | `examdiag report --format xlsx` | 三工作表：根因汇总 / 错题映射 / 7 天计划 |
+| HTML | `examdiag report --format html` | 交互式可视化（即 5.4 节的报告） |
+
+**操作流程**：执行 `examdiag report --attempts <作答> --concepts <概念> --format xlsx`
+（`--out` 可指定输出路径，缺省写入配置的 output_dir）。导出 CSV/Excel 前
+先运行 `pip install 'exam-diag[report]'` 安装 openpyxl 依赖。
+
+可视化报告的生成逻辑同样由本模块提供（scripts/make_report.py 已下沉为
+examdiag/report.py 的薄包装），保证手册、命令行与库函数三者行为一致。
 
 ## 6. 评测方法与协议
 
@@ -576,7 +620,7 @@ Value error, prereq cycle detected: s.a.b -> s.c.d -> s.a.b
 
 **（5）pyBKT 在新版 Python/numpy/sklearn 上的兼容问题** —— 仅在复现第 6.2 节
 真实数据评测时可能遇到：sklearn 指标探测报错、numpy≥2 数组赋值报错、
-macOS 多进程拟合信号量死锁。处置见仓库 PROGRESS.md"pyBKT 兼容性垫片"一节
+macOS 多进程拟合信号量死锁。处置见仓库 docs/devlog.md 技术备忘一节
 （三处最小兼容修改，不涉及算法本身）。
 
 ## 8. 版本说明
@@ -588,11 +632,11 @@ macOS 多进程拟合信号量死锁。处置见仓库 PROGRESS.md"pyBKT 兼容�
 | v0.3.0 | 2026-10-28 | 单文件可视化报告、演示 GIF、双语 README、演示笔记本 |
 | v0.3.1 | 2026-10-28 | 多用户演示数据（三条薄弱链）+ GIF 重制（3 根因同屏） |
 | v0.4.0 | 2026-10-30 | 真实数据验证：ASSISTments 27.4 万条作答 5 折 CV，自写 BKT 与 pyBKT AUC 差距 0.0002 |
-| **V0.5.0** | 2026-10-30 | **本申请版本**：在 v0.4.0 全部功能基础上整理软件著作权申请材料（源程序文档、用户手册、申请信息） |
+| v0.5.0 | 2026-10-30 | 软件著作权申请材料整理（源程序文档、用户手册、申请信息） |
+| **V0.6.0** | 2026-10-30 | **本申请版本**：新增报告导出模块（examdiag/report.py，Markdown/CSV/Excel/HTML）、SM-2 复习调度器（含老化防饿死队列）、用户配置文件（~/.examdiag.toml）；`examdiag --version` 版本闭环；申请材料按本版本重新生成 |
 
-本版本（V0.5.0）相对 v0.4.0 未修改任何引擎与数据文件，仅新增
-docs/copyright/ 下的申请材料与生成脚本；仓库中代码版本常量保持发布时的
-v0.1.0 字样，版本演进以 git 标签为准（上表）。
+本版本（V0.6.0）的软件全称、版本号在源代码版本常量、命令行 `--version`
+输出、本手册与源程序册页眉四处完全一致。
 
 ## 9. 常见问题
 
@@ -687,8 +731,8 @@ options:
 | v0.3.0 | 2026-10-28 | 单文件可视化报告、演示 GIF、双语 README、演示笔记本 |
 | v0.3.1 | 2026-10-28 | 多用户演示数据（三条薄弱链）+ GIF 重制（3 根因同屏） |
 | v0.4.0 | 2026-10-30 | 真实数据验证：ASSISTments 27.4 万条作答 5 折 CV，自写 BKT 与 pyBKT AUC 差距 0.0002 |
-| **V0.5.0** | 2026-10-30 | **本申请版本**：在 v0.4.0 全部功能基础上整理软件著作权申请材料（源程序文档、用户手册、申请信息） |
+| v0.5.0 | 2026-10-30 | 软件著作权申请材料整理（源程序文档、用户手册、申请信息） |
+| **V0.6.0** | 2026-10-30 | **本申请版本**：新增报告导出模块（examdiag/report.py，Markdown/CSV/Excel/HTML）、SM-2 复习调度器（含老化防饿死队列）、用户配置文件（~/.examdiag.toml）；`examdiag --version` 版本闭环；申请材料按本版本重新生成 |
 
-本版本（V0.5.0）相对 v0.4.0 未修改任何引擎与数据文件，仅新增
-docs/copyright/ 下的申请材料与生成脚本；仓库中代码版本常量保持发布时的
-v0.1.0 字样，版本演进以 git 标签为准（上表）。
+本版本（V0.6.0）的软件全称、版本号在源代码版本常量、命令行 `--version`
+输出、本手册与源程序册页眉四处完全一致。

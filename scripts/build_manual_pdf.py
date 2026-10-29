@@ -41,7 +41,7 @@ OUT = ROOT / "docs/copyright/manual.pdf"
 ASSETS = ROOT / "docs/copyright"
 
 SOFTWARE = "exam-diag 考试错题根因诊断系统"
-VERSION = "V0.5.0"
+VERSION = "V0.6.0"
 
 PAGE_W, PAGE_H = A4
 M_L, M_R, M_T, M_B = 2.2 * cm, 2.2 * cm, 2.6 * cm, 2.2 * cm

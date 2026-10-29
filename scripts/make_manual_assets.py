@@ -60,7 +60,7 @@ def render_terminal(title: str, lines: list[tuple[str, str]], out: Path) -> None
     H = len(lines) * LH + PAD * 2 + 30
     img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
-    d.text((PAD, 8), title, font=fonts[0], fill=(120, 130, 145))
+    draw_line(d, PAD, 8, title, fonts, (120, 130, 145))
     y = 30
     for text, color in lines:
         draw_line(d, PAD, y, text, fonts, color)
@@ -152,6 +152,14 @@ def main() -> None:
         "补习路径输出（三个用户，真实运行）",
         [green("python -c \"print remedy paths for demo-a/b/c\"")] + [(t, FG) for t in out],
         ASSETS / "shot_remedy.png",
+    )
+
+    # 4.5) 版本自报家门（名称/版本证据闭环）
+    ver = run_capture(["examdiag", "--version"])
+    render_terminal(
+        "examdiag --version（真实输出）",
+        [green("examdiag --version")] + [(t, FG) for t in ver],
+        ASSETS / "shot_version.png",
     )
 
     # 5) 数据校验（真实全量校验）

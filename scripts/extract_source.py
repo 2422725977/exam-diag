@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs/copyright/source-60p.pdf"
 
 SOFTWARE = "exam-diag 考试错题根因诊断系统"
-VERSION = "V0.5.0"
+VERSION = "V0.6.0"
 LINES_PER_PAGE = 50
 DPI = 150
 PAGE_W, PAGE_H = 1240, 1754  # A4 @150dpi
@@ -39,6 +39,7 @@ FONT_CJK = "/System/Library/Fonts/STHeiti Medium.ttc"
 FILE_ORDER = [
     "examdiag/__init__.py", "examdiag/schema.py", "examdiag/bkt.py",
     "examdiag/graph.py", "examdiag/diagnose.py", "examdiag/srs.py",
+    "examdiag/report.py", "examdiag/config.py",
     "examdiag/eval.py", "examdiag/cli.py",
 ]
 
@@ -68,14 +69,16 @@ def collect_lines() -> tuple[list[str], dict[str, int]]:
     ordered = FILE_ORDER[:]
     ordered += sorted(p.as_posix() for p in Path(ROOT, "tests").glob("*.py"))
     ordered += sorted(p.as_posix() for p in Path(ROOT, "scripts").glob("*.py"))
-    for rel in ordered:
+    for i, rel in enumerate(ordered):
         path = ROOT / rel
         if not path.exists():
             continue
         text = path.read_text(encoding="utf-8").rstrip("\n")
         body = text.splitlines()
         header = f"# ============ 文件: {rel}  ({len(body)} 行) ============"
-        chunk = [header, *body, ""]
+        chunk = [header, *body]
+        if i < len(ordered) - 1:  # 末文件不加尾部分隔：册子以程序自然结束收尾
+            chunk.append("")
         per_file[rel] = len(body)
         lines.extend(chunk)
     return lines, per_file
@@ -129,6 +132,9 @@ def main() -> None:
     print(f"source files: {len(per_file)}, listing lines: {total_lines:,}")
     print(f"examdiag/ core: {sum(v for k, v in per_file.items() if k.startswith('examdiag/')):,} lines")
     print(f"pages rendered: {len(pages)} (per-page {LINES_PER_PAGE} lines), PDF pages (pypdf): {real_pages}")
+    # 鉴别材料规则：最后一页必须以程序自然结束收尾（最后一行 = 末文件末行）
+    last = pages[-1][-1].strip()
+    print(f"page {real_pages} ends with: {last[:70]!r}")
 
 
 if __name__ == "__main__":
