@@ -89,7 +89,7 @@ SPEC 5.3 的 score 公式衡量"未掌握程度 × 上游未掌握传播"，直�
 ## 数据与验收基线（登记时的真实状态）
 
 - 核心包 examdiag/ 1,727 行（schema / bkt / graph / diagnose / srs / report /
-  config / eval / cli），tests/ 1,050 行 105 个单元测试，scripts/ 1,875 行；
+  config / eval / cli），tests/ 1,207 行 105 个单元测试，scripts/ 1,655 行；
 - 四科知识图谱 240 概念 + 600 道自建题 + 三份演示作答数据，`validate_data.py all` 全 PASS；
 - 合成基准：自写 BKT AUC 0.7872；真实数据（ASSISTments 27.4 万条）5 折 CV：
   自写 BKT AUC 0.7118 vs pyBKT 0.7116。
